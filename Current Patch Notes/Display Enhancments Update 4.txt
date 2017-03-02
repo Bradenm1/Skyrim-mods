@@ -1,0 +1,13 @@
+Display Enhancements - Update
+
+Add:
+	-Fade RGB Options
+
+Changed:
+	-Adjusted one of the presets a little
+		-Contrast from 1.6 to 1.4
+
+		
+Reference
+	Revert <= 13
+	13 Events for revert
