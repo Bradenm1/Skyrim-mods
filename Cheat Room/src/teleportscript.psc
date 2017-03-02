@@ -22,6 +22,10 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 				Menu01(akTarget)
 			Elseif iButton01 ==3
 				Menu02(akTarget)
+			;Elseif iButton01 ==4
+			;	int random = Utility.RandomInt(0, RandLocation.GetSize())
+			;	string LocationRand = RandLocation.getAt(random) as string
+			;	Debug.CenterOnCell(LocationRand)
 			endif
 		endif
 	endwhile
@@ -74,3 +78,5 @@ Function Menu02(Actor akTarget)
 		Xmarker00[10].moveto(aKTarget)
 	endif		
 EndFunction
+
+FormList Property RandLocation  Auto  

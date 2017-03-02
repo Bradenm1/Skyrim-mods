@@ -17,5 +17,7 @@ Event OnActivate(ObjectReference akActionRef)
 		GlobalVe.SetValue(100)
 	Elseif iButton ==5
 		GlobalVe.SetValue(1000)
+	Elseif iButton ==6
+		GlobalVe.SetValue(10000)
 	endif
 EndEvent
