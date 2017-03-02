@@ -1,0 +1,4 @@
+Cheat Room Update 10
+
+Changed:
+	-Spawn Rate for "NPC WAR" from 0.9 to 1.5 seconds
