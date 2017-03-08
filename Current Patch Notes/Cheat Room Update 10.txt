@@ -1,7 +1,8 @@
 Cheat Room Update 10
 
 Added:
-	-Comments to SpawnNPC Script
+	-Added comments to most scripts
 
 Changed:
 	-Spawn Rate for "NPC WAR" from 0.9 to 1.5 seconds
+	-Certain lines in Scripts
