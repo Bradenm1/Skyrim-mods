@@ -1,0 +1,1 @@
+Scriptname CheatRoomObjectREFSpell extends activemagiceffect  

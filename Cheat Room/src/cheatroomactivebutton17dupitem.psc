@@ -1,8 +1,10 @@
 Scriptname CheatRoomActiveButton17DupItem extends ObjectReference  
 
+;=======Properties=======
 GlobalVariable Property GlobalVe Auto
 Message Property Message01  Auto    
 
+;=======CODE START=======
 Event OnActivate(ObjectReference akActionRef)
 	int iButton = Message01.Show()
 	if iButton == 0;
@@ -17,5 +19,7 @@ Event OnActivate(ObjectReference akActionRef)
 		GlobalVe.SetValue(100)
 	Elseif iButton ==5
 		GlobalVe.SetValue(1000)
+	Elseif iButton ==6
+		GlobalVe.SetValue(10000)
 	endif
 EndEvent

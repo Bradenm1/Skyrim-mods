@@ -1,11 +1,12 @@
 Scriptname TeleportScript extends activemagiceffect  
 
+;=======Properties=======
 Message Property MainMenu  Auto
 Message Property Menu01  Auto
 Message Property Menu02  Auto
 ObjectReference[] Property Xmarker00  Auto
 
-
+;=======CODE START=======
 Event OnEffectStart(Actor akTarget, Actor akCaster)
 	int iButton01 = 0
 	bool Menu = True
@@ -27,8 +28,7 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 	endwhile
 EndEvent
 
-;Everything below here is unused
-
+;Teleport the player to a markerr
 Function Menu01(Actor akTarget)
 	int iButton02 = Menu01.Show()
 	if iButton02 == 0;
@@ -52,6 +52,7 @@ Function Menu01(Actor akTarget)
 	endif
 EndFunction
 
+;Teleport a marker to the player
 Function Menu02(Actor akTarget)
 	int iButton03 = Menu02.Show()
 	if iButton03 == 0;

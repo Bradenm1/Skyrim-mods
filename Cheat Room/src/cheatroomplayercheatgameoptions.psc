@@ -1,37 +1,35 @@
 Scriptname CheatRoomPlayerCheatGameOptions extends activemagiceffect  
 
+;=======Constants=======
+int DEFAULTTIMESCALE = 20
+
+;=======Properties=======
 Message Property WeatherMenu  Auto 
-
 Message Property TimeMenu  Auto  
-
 Message Property MainMenu  Auto  
+Message Property TimeScaleMessage  Auto   
 
 Weather Property Clear  Auto  
-
 Weather Property Cloudy  Auto  
-
 Weather Property Fog  Auto  
-
 Weather Property Rain  Auto  
-
 Weather Property Sovngarde  Auto  
-
 Weather Property Storm  Auto  
-
 Weather Property SovengardeDark  Auto
 
 GlobalVariable Property GlobalTime  Auto  
-
 GlobalVariable Property TimeScale  Auto  
 
-Message Property TimeScaleMessage  Auto   
+FormList Property WeatherList  Auto  
 
+;=======CODE START=======
 Event OnEffectStart(Actor akTarget, Actor akCaster)
 	Game.DisablePlayerControls(False, False, False, False, False, True)
 	SizeMenu()
 	Game.EnablePlayerControls(False, False, False, False, False, True)
 EndEvent
 
+;Main Menu
 Function SizeMenu(bool Menu = True, int iButton01 = 0)
 	While Menu
 		if iButton01 != -1
@@ -43,15 +41,12 @@ Function SizeMenu(bool Menu = True, int iButton01 = 0)
 				 Time01()
 			Elseif iButton01 ==2
 				TimeScale01()
-			;Elseif iButton01 ==3
-			;	Game.GetPlayer().SetScale(Game.GetPlayer().GetScale()+0.01)
-			;Elseif iButton01 ==4
-			;	SizeMenuLarge01()
 			endif
 		endif
 	endwhile
 EndFunction
 
+;Weather Menu
 Function Weather01()
 	int iButton02 = WeatherMenu.Show()
 	if iButton02 == 0;
@@ -68,15 +63,14 @@ Function Weather01()
 		Sovngarde.ForceActive()
 	Elseif iButton02 ==6
 		SovengardeDark.ForceActive()
-;	Elseif iButton02 ==7
-;		Game.GetPlayer().SetScale(0.97)
-;	Elseif iButton02 ==8
-;		Game.GetPlayer().SetScale(0.98)
-;	Elseif iButton02 ==9
-;		Game.GetPlayer().SetScale(0.99)
+	Elseif iButton02 ==7
+		int temp01 = Utility.RandomInt(0, WeatherList.GetSize())
+		Weather temp02 = WeatherList.getAt(temp01) as Weather
+		temp02.ForceActive()
 	endif
 EndFunction
 
+;GameHour Menu
 Function Time01()
 	int iButton03 = TimeMenu.Show()
 	if iButton03 == 0;
@@ -89,19 +83,10 @@ Function Time01()
 		GlobalTime.SetValue(17)
 	Elseif iButton03 ==4
 		GlobalTime.SetValue(24)
-;	Elseif iButton03 ==5
-;		Game.GetPlayer().SetScale(1.06)
-;	Elseif iButton03 ==6
-;		Game.GetPlayer().SetScale(1.07)
-;	Elseif iButton03 ==7
-;		Game.GetPlayer().SetScale(1.08)
-;	Elseif iButton03 ==8
-;		Game.GetPlayer().SetScale(1.09)
-;	Elseif iButton03 ==9
-;		Game.GetPlayer().SetScale(1.10)
 	endif		
 EndFunction
 
+;TimeScale Menu
 Function TimeScale01()
 	int iButton04 = TimeScaleMessage.Show()
 	if iButton04 == 0;
@@ -111,9 +96,9 @@ Function TimeScale01()
 	Elseif iButton04 ==2
 		TimeScale.SetValue(8)
 	Elseif iButton04 ==3
-		TimeScale.SetValue(10)
+		TimeScale.SetValue(13)
 	Elseif iButton04 ==4
-		TimeScale.SetValue(16)
+		TimeScale.SetValue(DEFAULTTIMESCALE)
 	Elseif iButton04 ==5
 		TimeScale.SetValue(32)
 	Elseif iButton04 ==6

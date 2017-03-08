@@ -1,10 +1,19 @@
 Scriptname CheatRoomActiveButton23Skills extends ObjectReference  
 
-Int Property SkillPlus  Auto  
-String Property SkillName  Auto  
+;=======Properties=======
+GlobalVariable Property SkillPlus  Auto  
+String Property SkillName  Auto 
+GlobalVariable Property SetorMod  Auto   
 
+;=======CODE START=======
 Event OnActivate(ObjectReference akActionRef)
-	float temp
-	temp = Game.GetPlayer().GetActorValue(SkillName) + SkillPlus
-	Game.GetPlayer().SetActorValue(SkillName, temp)
+	float temp = 0
+	;Check if adding by mod or set
+	if (SetorMod.GetValue() == 0)
+		temp = Game.GetPlayer().GetActorValue(SkillName) + SkillPlus.GetValueInt()
+		Game.GetPlayer().SetActorValue(SkillName, temp)
+	Else
+		Game.GetPlayer().ModActorValue(SkillName, SkillPlus.GetValueInt())
+	endIf
+	Debug.Notification(SkillName + " + " + SkillPlus.GetValueInt())
 EndEvent
