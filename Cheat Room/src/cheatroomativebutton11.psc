@@ -16,31 +16,23 @@ Function SizeMenu(bool Menu = True, int iButton01 = 0)
 			Menu = False
 			if iButton01 == 0;
 				float i = Game.GetPlayer().GetScale()
-				i = i - 0.10
+				i = i + -0.14
 				Game.GetPlayer().SetScale(i)
-				Debug.Notification("Height = " + i)
 			Elseif iButton01 ==1
 				float i = Game.GetPlayer().GetScale()
-				i = i - 0.01
+				i = i + -0.04
 				Game.GetPlayer().SetScale(i)
-				Debug.Notification("Height = " + i)
 			Elseif iButton01 ==2
 				float i = ScaleOld.GetValue()
 				Game.GetPlayer().SetScale(i)
-				Debug.Notification("Height = " + i)
 			Elseif iButton01 ==3
-				Game.GetPlayer().SetScale(1)
-				Debug.Notification("Height = " + "1")
+				float i = Game.GetPlayer().GetScale()
+				i = i + -0.02
+				Game.GetPlayer().SetScale(i)
 			Elseif iButton01 ==4
 				float i = Game.GetPlayer().GetScale()
-				i = i + 0.01
+				i = i +  0.10 + -0.02
 				Game.GetPlayer().SetScale(i)
-				Debug.Notification("Height = " + i)
-			Elseif iButton01 ==5
-				float i = Game.GetPlayer().GetScale()
-				i = i +  0.10
-				Game.GetPlayer().SetScale(i)
-				Debug.Notification("Height = " + i)
 			endif
 		endif
 	endwhile

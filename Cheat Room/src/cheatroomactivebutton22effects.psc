@@ -21,26 +21,15 @@ endFunction
 Function Effects()
 	Int Index = 0
 	while (Index < AllEffects.GetSize())
-		;MenuOpen()
 		game.getplayer().addspell((AllEffects.getAt(Index) as Spell))
 		Index += 1
 	endWhile
-	Debug.MessageBox("Button is Done Adding!")
 EndFunction
 
 Function EffectsRemove()
 	Int Index = 0
 	while (Index < AllEffects.GetSize())
-		;MenuOpen()
 		game.getplayer().removespell((AllEffects.getAt(Index) as Spell))
 		Index += 1
-	endWhile
-	Debug.MessageBox("Button is Done Removing!")
-EndFunction
-
-Function MenuOpen()
-	while (Utility.IsInMenuMode())
-		Utility.Wait(3)
-		Debug.MessageBox("Script are running from the button your pressed. CLOSE THE MENUS YOU ARE IN...")
 	endWhile
 EndFunction

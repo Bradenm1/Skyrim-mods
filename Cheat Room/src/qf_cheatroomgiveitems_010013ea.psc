@@ -2,25 +2,10 @@
 ;NEXT FRAGMENT INDEX 22
 Scriptname QF_CheatroomGiveItems_010013EA Extends Quest Hidden
 
-;BEGIN FRAGMENT Fragment_7
-Function Fragment_7()
+;BEGIN FRAGMENT Fragment_9
+Function Fragment_9()
 ;BEGIN CODE
-Game.RequestSave()
-Game.GetPlayer().addspell(tele)
-Game.GetPlayer().addspell(CheatOption01)
-Game.GetPlayer().addspell(CheatOption02)
-Game.GetPlayer().addspell(CheatOption03)
-Debug.Notification("Cheat Room Teleport Spell added")
-Debug.MessageBox("Cheat Room has been installed and is enabled. Backups of certain player veriables (Health, Magicka, etc) have been saved.")
-;END CODE
-EndFunction
-;END FRAGMENT
-
-;BEGIN FRAGMENT Fragment_14
-Function Fragment_14()
-;BEGIN CODE
-Game.GetPlayer().addspell(tele)
-Debug.MessageBox("In-case installed before users creation. This message box means that the Cheat Room Teleport spell was added to your spells list.")
+Xmarker02.PlaceAtMe(Player)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -34,32 +19,32 @@ Oldstats[0].SetValue(Game.GetPlayer().GetActorValue("Alchemy"))
 ;Alteration
 Oldstats[1].SetValue(Game.GetPlayer().GetActorValue("Alteration"))
 
-;Alteration
-Oldstats[2].SetValue(Game.GetPlayer().GetActorValue("Marksman"))
-
 ;Block
-Oldstats[3].SetValue(Game.GetPlayer().GetActorValue("Block"))
+Oldstats[2].SetValue(Game.GetPlayer().GetActorValue("Block"))
 
 ;CarryWeight
-Oldstats[4].SetValue(Game.GetPlayer().GetActorValue("CarryWeight"))
+Oldstats[3].SetValue(Game.GetPlayer().GetActorValue("CarryWeight"))
 
 ;Conjuration
-Oldstats[5].SetValue(Game.GetPlayer().GetActorValue("Conjuration"))
+Oldstats[4].SetValue(Game.GetPlayer().GetActorValue("Conjuration"))
 
 ;Destruction
-Oldstats[6].SetValue(Game.GetPlayer().GetActorValue("Destruction"))
+Oldstats[5].SetValue(Game.GetPlayer().GetActorValue("Destruction"))
 
 ;Enchanting
-Oldstats[7].SetValue(Game.GetPlayer().GetActorValue("Enchanting"))
+Oldstats[6].SetValue(Game.GetPlayer().GetActorValue("Enchanting"))
 
 ;Health
-Oldstats[8].SetValue(Game.GetPlayer().GetActorValue("Health"))
+Oldstats[7].SetValue(Game.GetPlayer().GetActorValue("Health"))
 
 ;HeavyArmor
-Oldstats[9].SetValue(Game.GetPlayer().GetActorValue("HeavyArmor"))
+Oldstats[8].SetValue(Game.GetPlayer().GetActorValue("HeavyArmor"))
 
 ;Illusion
-Oldstats[10].SetValue(Game.GetPlayer().GetActorValue("Illusion"))
+Oldstats[9].SetValue(Game.GetPlayer().GetActorValue("Illusion"))
+
+;Invisibility
+Oldstats[10].SetValue(Game.GetPlayer().GetActorValue("Invisibility"))
 
 ;JumpinngBonus
 Oldstats[11].SetValue(Game.GetPlayer().GetActorValue("JumpinngBonus"))
@@ -95,7 +80,7 @@ Oldstats[20].SetValue(Game.GetPlayer().GetActorValue("Smithing"))
 Oldstats[21].SetValue(Game.GetPlayer().GetActorValue("Sneak"))
 
 ;Speechcraft
-Oldstats[22].SetValue(Game.GetPlayer().GetActorValue("Speechcraft"))
+Oldstats[22].SetValue(Game.GetPlayer().GetActorValue("Speechcraft "))
 
 ;SpeedMult
 Oldstats[23].SetValue(Game.GetPlayer().GetActorValue("SpeedMult"))
@@ -111,17 +96,29 @@ Oldstats[26].SetValue(Game.GetPlayer().GetActorValue("WeaponSpeedMult"))
 
 ;DetectLifeRange
 Oldstats[27].SetValue(Game.GetPlayer().GetActorValue("DetectLifeRange"))
-
-;Invisibility
-;Oldstats[28].SetValue(Game.GetPlayer().GetActorValue("Invisibility"))
 ;END CODE
 EndFunction
 ;END FRAGMENT
 
-;BEGIN FRAGMENT Fragment_9
-Function Fragment_9()
+;BEGIN FRAGMENT Fragment_7
+Function Fragment_7()
 ;BEGIN CODE
-;Xmarker02.PlaceAtMe(Player)
+Game.RequestSave()
+Game.GetPlayer().addspell(tele)
+Game.GetPlayer().addspell(CheatOption01)
+Game.GetPlayer().addspell(CheatOption02)
+Game.GetPlayer().addspell(CheatOption03)
+Debug.Notification("Cheat Room Teleport Spell added")
+Debug.MessageBox("Cheat Room has been installed and is enabled. Backups of certain player veriables (Health, Magicka, etc) have been saved.")
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_14
+Function Fragment_14()
+;BEGIN CODE
+Game.GetPlayer().addspell(tele)
+Debug.MessageBox("In-case installed before users creation. This message box means that the Cheat Room Teleport spell was added to your spells list.")
 ;END CODE
 EndFunction
 ;END FRAGMENT
