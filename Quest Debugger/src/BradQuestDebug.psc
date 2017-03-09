@@ -1,5 +1,10 @@
 Scriptname BradQuestDebug extends activemagiceffect  
 
+;=======Constants=======
+int DISPLAYDEBUGINFOEVERY= 250
+int GIVEERRORAT = 2000
+
+;=======Properties=======
 FormList Property BradQuestDebugAll  Auto  
 
 Message[] Property DebugMenus  Auto  
@@ -8,12 +13,14 @@ GlobalVariable Property BradQuestDebugPosNeg  Auto
 GlobalVariable Property BradQuestDebugStage  Auto  
 GlobalVariable Property BradQuestDebugQuest  Auto  
 
+;=======Fields=======
 Quest tempQuest
 Bool StageOrQuest
 
-
+;=======CODE START=======
 Event OnEffectStart(Actor akTarget, Actor akCaster)
 	tempQuest = BradQuestDebugAll.getAt(BradQuestDebugQuest.GetValueInt()) as Quest
+	;Bunch of code for logging the quests
 	;Debug.OpenUserLog("myUserLog")
 	;Int i = 0
 	;While i < BradQuestDebugAll.GetSize()
@@ -25,6 +32,7 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 	DebugMainMenu()
 EndEvent
 
+;Main Menu
 Function DebugMainMenu()
 	Int iButton01 =  DebugMenus[0].Show()
 	if iButton01 == 0;
@@ -38,12 +46,14 @@ Function DebugMainMenu()
 	endif
 EndFunction
 
+;Quest Menu
 Function DebugQuestSelect()
 	Int iButton01 =  DebugMenus[1].Show()
 	if iButton01 == 0;
 		StageOrQuest = True
 		DebugIndex(StageOrQuest)
 	Elseif iButton01 ==1
+		;Auto Select Quest
 		Int o = 0 
 		Bool hasFound = False
 		While o < BradQuestDebugAll.GetSize() && hasFound == False
@@ -54,7 +64,7 @@ Function DebugQuestSelect()
 				Debug.MessageBox("The quest has been set in your index")
 				hasFound = True
 			Else
-				If (o % 250) == 0
+				If (o % DISPLAYDEBUGINFOEVERY) == 0
 					Debug.Notification("Please Wait... Entry " + o + "/" + " " + BradQuestDebugAll.GetSize())
 				EndIf
 				o += 1
@@ -87,6 +97,7 @@ Function DebugQuestSelect()
 	endif
 EndFunction
 
+;Stage Menu
 Function DebugStageSelect()
 	Int iButton01 =  DebugMenus[2].Show()
 	if iButton01 == 0;
@@ -105,6 +116,7 @@ Function DebugStageSelect()
 	endif
 EndFunction
 
+;Quest Options Menu
 Function DebugOptions()
 	Int iButton01 =  DebugMenus[3].Show()
 	if iButton01 == 0;
@@ -122,6 +134,7 @@ Function DebugOptions()
 	Elseif iButton01 ==6
 		tempQuest.SetCurrentStageID(BradQuestDebugStage.GetValueInt())
 	Elseif iButton01 ==7
+		;Auto Complete Next Stage
 		Int i = 0
 		Int o = tempQuest.GetStage()
 		Bool tempCompleted = True
@@ -131,20 +144,23 @@ Function DebugOptions()
 			Else
 				o += 1
 				i += 1
-				If i > 2000
+				If i > GIVEERRORAT
 					tempCompleted = False
 					Debug.MessageBox("An error occured with the stages.")
 				EndIf
 			Endif
 		EndWhile
-		if i < 2000
+		if i < GIVEERRORAT
 			Debug.MessageBox(o + " Stage Completed")
 		endif
 	endif
 EndFunction
 
+;Quest/Stage Selection
 Function DebugIndex(Bool StageOrQuestSub)
+	;Check if user is using Stage or Quest for selection
 	If StageOrQuestSub == True
+		;Checks if they are adding or removing
 		If BradQuestDebugPosNeg.GetValueInt() == 0
 			;Pos
 			Int iButton01 =  DebugMenus[4].Show()
