@@ -1,5 +1,10 @@
 Scriptname BradsFreeCamScript extends activemagiceffect  
 
+;=======Constants=======
+float MINWAIT = 0.1
+float DEFAULTANGLE = 0.0
+
+;=======Properties=======
 Actor Property FreeCamActor  Auto  
 Actor Property FreeCamActorMovement  Auto  
 
@@ -17,17 +22,19 @@ Message Property Menu02  Auto
 Message Property SubMenu  Auto  
 Message[] Property FieldofView  Auto  
 
-
+;=======CODE START=======
+;Main Menu
 Event OnEffectStart(Actor akTarget, Actor akCaster)
 	Int iButton = Menu01.Show()
 	If iButton == 0 
+		;Move camera to player
 		If RoamOnZ.GetValueInt() == 0
 			FreeCamActor.EnableAI(True)
-			FreeCamActor.SetAngle(0.0, 0.0, rotation.GetValueInt())
+			FreeCamActor.SetAngle(DEFAULTANGLE, DEFAULTANGLE, rotation.GetValueInt())
 			FreeCamActor.MoveTo(Game.GetPlayer())
 			FreeCamActor.EnableAI(False)
 			Utility.Wait(0.1)
-			;FreeCamActor.SetScale(0.0)
+			;Checks if player wants controls to be disabled or enabled
 			If ControlsOnOff.GetValueInt() == 0
 				Game.SetPlayerAIDriven()
 			Else
@@ -40,13 +47,14 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 				Game.SetCameraTarget(Game.GetPlayer())
 			Endif
 			FreeCamActor.SetPlayerControls(True)
-			Utility.Wait(0.1)
+			Utility.Wait(MINWAIT)
 			FreeCamActor.SetPlayerControls(True)
 			ison.SetValueInt(1)
 		Else
 			Debug.MessageBox("You cannot do this while in movement mode")
 		Endif
 	ElseIf iButton == 1
+		;Set/unSet the camera control onto the camera
 		If RoamOnZ.GetValueInt() == 0
 			If ViewOnOff.GetValueInt() == 0
 				Game.SetCameraTarget(Game.GetPlayer())
@@ -68,12 +76,15 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 			ControlsOnOff.SetValueInt(0)
 		EndIf
 	ElseIf iButton == 3
+		;Open submenu
 		Menu01SubMenu()
 	ElseIf iButton == 4
+		;Remove camera from world
 		FreeCamActor.MoveTo(DefaultCell)
 		FreeCamActor.SetPlayerControls(False)
 		ison.SetValueInt(0)
 	ElseIf iButton == 5
+		;Enable camera movement
 		If RoamOnZ.GetValueInt() == 0
 			FreeCamActorMovement.AllowPCDialogue(false)
 			Game.ForceThirdPerson()
@@ -82,7 +93,7 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 			Game.SetCameraTarget(FreeCamActorMovement)
 			FreeCamActorMovement.SetPlayerControls(True)
 			FreeCamActorMovement.EnableAI(True)
-			Utility.Wait(0.1)
+			Utility.Wait(MINWAIT)
 			FreeCamActorMovement.EnableAI(True)
 			RoamOnZ.SetValueInt(1)
 		Else
@@ -95,6 +106,7 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 	EndIf
 endEvent
 
+;Sub Menu
 Function Menu01SubMenu()
 	Int iButton = SubMenu.Show()
 	If iButton == 0 
@@ -106,6 +118,7 @@ Function Menu01SubMenu()
 	Endif
 EndFunction
 
+;Set Adjust speed
 Function Menu02()
 	Int iButton = Menu02.Show()
 	If iButton == 0 
@@ -125,6 +138,7 @@ Function Menu02()
 	Endif
 EndFunction
 
+;Change FOV Menu01
 Function Menu03()
 	Int iButton = FieldofView[0].Show()
 	If iButton == 0 
@@ -148,6 +162,7 @@ Function Menu03()
 	Endif
 EndFunction
 
+;Change FOV Menu02
 Function Menu04()
 	Int iButton = FieldofView[1].Show()
 	If iButton == 0 

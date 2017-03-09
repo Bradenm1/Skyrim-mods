@@ -1,22 +1,26 @@
 Scriptname BradsCamRotation45 extends activemagiceffect  
 
+;=======Constants=======
+float DEFAULTANGLE = 0.0
+int MAXANGLE = 360
+
+;=======Properties=======
 ObjectReference Property Actor01  Auto  
 
 GlobalVariable Property rotation  Auto  
 
 Float Property rotationAmount  Auto  
 
-
+;=======CODE START=======
 Event OnEffectStart(Actor akTarget, Actor akCaster)
-	If rotation.GetValueInt() >= 360
+	If rotation.GetValueInt() >= MAXANGLE
 		rotation.SetValueInt(0)
 	else
 		;Nothing
 	Endif
-	Float Temp = rotation.GetValue() + rotationAmount
-	rotation.SetValue(Temp)
+	rotation.SetValue(rotation.GetValue() + rotationAmount)
 	Actor ActorTemp = Actor01 as Actor
 	ActorTemp.EnableAI(True)
-	ActorTemp.SetAngle(0.0, 0.0, rotation.GetValueInt())
+	ActorTemp.SetAngle(DEFAULTANGLE, DEFAULTANGLE, rotation.GetValueInt())
 	ActorTemp.EnableAI(False)
 endEvent
