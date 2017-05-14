@@ -1,5 +1,5 @@
 ;BEGIN FRAGMENT CODE - Do not edit anything between this and the end comment
-;NEXT FRAGMENT INDEX 1
+;NEXT FRAGMENT INDEX 3
 Scriptname QF_BradGiveAIScript_01000D64 Extends Quest Hidden
 
 ;BEGIN ALIAS PROPERTY AIActivate
@@ -10,8 +10,7 @@ ReferenceAlias Property Alias_AIActivate Auto
 ;BEGIN FRAGMENT Fragment_0
 Function Fragment_0()
 ;BEGIN CODE
-;gf
-Game.GetPlayer().AddSpell(Spell01)
+BradTheifAI.AddSpell(Spell01)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -19,3 +18,5 @@ EndFunction
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 SPELL Property Spell01  Auto  
+
+Actor Property BradTheifAI  Auto  
