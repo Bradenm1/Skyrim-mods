@@ -50,23 +50,25 @@ EndFunction
 Function Weather01()
 	int iButton02 = WeatherMenu.Show()
 	if iButton02 == 0;
-		Clear.ForceActive()
+		Clear.ForceActive(true)
 	Elseif iButton02 ==1
-		Fog.ForceActive()
+		Fog.ForceActive(true)
 	Elseif iButton02 ==2
-		Cloudy.ForceActive()
+		Cloudy.ForceActive(true)
 	Elseif iButton02 ==3
-		Rain.ForceActive()
+		Rain.ForceActive(true)
 	Elseif iButton02 ==4
-		Storm.ForceActive()
+		Storm.ForceActive(true)
 	Elseif iButton02 ==5
-		Sovngarde.ForceActive()
+		Sovngarde.ForceActive(true)
 	Elseif iButton02 ==6
-		SovengardeDark.ForceActive()
+		SovengardeDark.ForceActive(true)
 	Elseif iButton02 ==7
 		int temp01 = Utility.RandomInt(0, WeatherList.GetSize())
 		Weather temp02 = WeatherList.getAt(temp01) as Weather
-		temp02.ForceActive()
+		temp02.ForceActive(true)
+	Elseif iButton02 ==8
+		Weather.ReleaseOverride()
 	endif
 EndFunction
 

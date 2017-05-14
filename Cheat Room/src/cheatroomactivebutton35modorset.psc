@@ -19,5 +19,7 @@ Function Menu()
 		SetorMod.SetValue(0)
 	Elseif iButton01 ==1
 		SetorMod.SetValue(1)
+	Elseif iButton01 ==2
+		SetorMod.SetValue(2)
 	endif
 endFunction

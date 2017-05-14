@@ -5,6 +5,7 @@ Scriptname CheatRoomSpawnNPCs01 extends activemagiceffect
 int SPAWNACTORRANDOMNO = 0
 int ARRAYADDON01 = 6
 int ARRAYADDON02 = 12
+int ARRAYADDON03 = 18
 
 ;=======Properties=======
 ActorBase[] Property ActorsSpawn  Auto  
@@ -114,6 +115,8 @@ Function SpawnMenu()
 	Elseif iButton02 ==2
 		Message04()
 	Elseif iButton02 ==3
+		Message05()
+	Elseif iButton02 ==4
 		RandomActor()
 	endif
 EndFunction
@@ -209,6 +212,15 @@ Function Message04()
 		SpawnSpellOther.SetValue(17)
 		SpawnActorRandom.SetValue(SPAWNACTORRANDOMNO)
 		SpawnThingy(iButton02 + ARRAYADDON02)
+	endif
+EndFunction
+
+Function Message05()
+	int iButton02 = MessageBoxes[8].Show()
+	if iButton02 == 0;
+		SpawnSpellOther.SetValue(18)
+		SpawnActorRandom.SetValue(SPAWNACTORRANDOMNO)
+		SpawnThingy(iButton02 + ARRAYADDON03)
 	endif
 EndFunction
 

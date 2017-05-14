@@ -184,5 +184,7 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 		DivorceQuest01.Reset()
 		DivorceQuest02.Reset()
 		DivorceQuest01.SetStage(DIVORCEQUEST)
+	Elseif GlobalVe.GetValue() == 46
+		akTarget.Disable()
 	endif
 EndEvent

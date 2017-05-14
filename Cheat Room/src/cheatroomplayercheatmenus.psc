@@ -11,7 +11,8 @@ GlobalVariable Property KillAllArea  Auto
 GlobalVariable Property EnableDisableAI  Auto   
 GlobalVariable Property PushAwayArea  Auto  
 
-Message Property MainMenu  Auto    
+Message Property MainMenu  Auto
+Message Property MainMenu02  Auto      
 Message Property Menu01  Auto
 Message Property Menu02  Auto
 Message Property Menu03  Auto  
@@ -20,11 +21,13 @@ Message Property Menu05  Auto
 Message Property Menu06  Auto  
 Message Property Menu07  Auto  
 Message Property Menu08  Auto  
+Message Property Menu09  Auto  
 
 Int Property RangeOfConstant  Auto  
 
 FormList Property MindControl  Auto  
 FormList Property RandActors  Auto  
+FormList Property DoorContainerList  Auto  
 
 ;=======CODE START=======
 Event OnEffectStart(Actor akTarget, Actor akCaster)
@@ -54,12 +57,20 @@ Function CheatMenu(bool Menu = True, int iButton01 = 0)
 			Elseif iButton01 ==6
 				Menu07()
 			Elseif iButton01 ==7
-				Menu08()
-			Elseif iButton01 ==8
-				;GlobalVe.SetValue(42)
+				MainMenu02()
 			endif
 		endif
 	endwhile
+EndFunction
+
+;Second MainMenu
+Function MainMenu02()
+	int iButton02 = MainMenu02.Show()
+	if iButton02 == 0;
+		Menu08()
+	Elseif iButton02 ==1
+		Menu09()
+	endif
 EndFunction
 
 ;First Menu
@@ -208,6 +219,19 @@ Function Menu08()
 		Game.SetPlayerAIDriven(True) 
 	Elseif iButton05 == 6
 		GlobalVe.SetValue(45)
+	endif
+EndFunction
+
+Function Menu09()
+	int iButton05 = Menu09.Show()
+	if iButton05 == 0;
+		GlobalVe.SetValue(46)
+	Elseif iButton05 == 1
+		ObjectReference closestDoorContainer = Game.FindClosestReferenceOfAnyTypeInListFromRef(DoorContainerList, Game.GetPlayer(), RangeOfConstant)
+		closestDoorContainer.Lock(false, true)
+	Elseif iButton05 == 2
+		ObjectReference closestDoorContainer = Game.FindClosestReferenceOfAnyTypeInListFromRef(DoorContainerList, Game.GetPlayer(), RangeOfConstant)
+		closestDoorContainer.Lock(true, true)
 	endif
 EndFunction
 

@@ -17,6 +17,7 @@ EndEvent
 Function Menu()
 	int iButton01 = Menu01.Show()
 	if iButton01 == 0
+		Debug.MessageBox("You'll get a prompt when the button is done")
 		Shouts()
 	Elseif iButton01 ==1
 		Word()
@@ -38,6 +39,7 @@ EndFunction
 
 ;Add shouts
 Function Word()
+	Debug.MessageBox("You'll get a prompt when the button is done")
 	Int Index = 0
 	while (Index < SHOUTS2.Length)
 		game.getplayer().addshout(SHOUTS2[Index])

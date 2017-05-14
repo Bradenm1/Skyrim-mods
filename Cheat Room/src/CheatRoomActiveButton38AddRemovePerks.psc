@@ -1,7 +1,7 @@
-Scriptname CheatRoomActiveButton22Effects extends ObjectReference  
+Scriptname CheatRoomActiveButton38AddRemovePerks extends ObjectReference  
 
 ;=======Properties=======
-FormList Property AllEffects  Auto
+FormList Property AllPerks  Auto
 Message Property Menu01  Auto    
 
 ;=======CODE START=======
@@ -14,31 +14,31 @@ EndEvent
 Function Menu()
 	int iButton01 = Menu01.Show()
 	if iButton01 == 0
-		Effects()
+		Perks()
 	Elseif iButton01 ==1
-		EffectsRemove()
+		PerksRemove()
 	endif
 endFunction
 
 ;Add spells to player
-Function Effects()
+Function Perks()
 	Debug.MessageBox("You'll get a prompt when the button is done")
 	Int Index = 0
-	while (Index < AllEffects.GetSize())
+	while (Index < AllPerks.GetSize())
 		;MenuOpen()
-		game.getplayer().addspell((AllEffects.getAt(Index) as Spell))
+		game.getplayer().AddPerk((AllPerks.getAt(Index) as Perk))
 		Index += 1
 	endWhile
 	Debug.MessageBox("Button is Done Adding!")
 EndFunction
 
 ;Remove spells from player
-Function EffectsRemove()
+Function PerksRemove()
 	Debug.MessageBox("You'll get a prompt when the button is done")
 	Int Index = 0
-	while (Index < AllEffects.GetSize())
+	while (Index < AllPerks.GetSize())
 		;MenuOpen()
-		game.getplayer().removespell((AllEffects.getAt(Index) as Spell))
+		game.getplayer().RemovePerk((AllPerks.getAt(Index) as Perk))
 		Index += 1
 	endWhile
 	Debug.MessageBox("Button is Done Removing!")

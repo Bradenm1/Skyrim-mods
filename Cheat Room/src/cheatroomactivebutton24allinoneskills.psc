@@ -17,8 +17,15 @@ Event OnActivate(ObjectReference akActionRef)
 		Elseif (SetorMod.GetValue() == 1)
 			;temp = Game.GetPlayer().GetActorValue(PlSkills[index])
 			Game.GetPlayer().ModActorValue(PlSkills[index],  SkillPlus.GetValueInt())
+		Elseif (SetorMod.GetValue() == 2)
+			If (SkillPlus.GetValueInt() < 0)
+				Debug.MessageBox("Advance Skill Cannot be negative")
+			Else
+				Game.AdvanceSkill(PlSkills[index],  SkillPlus.GetValueInt())
+			endIf
 		endIf
 		Debug.Notification(PlSkills[index] + " + " + SkillPlus.GetValueInt())
 		index+= 1
 	endWhile
+	Debug.MessageBox("Button is Done")
 EndEvent

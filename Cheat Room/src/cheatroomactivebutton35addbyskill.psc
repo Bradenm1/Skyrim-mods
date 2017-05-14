@@ -31,6 +31,8 @@ Function Menu()
 			SkillPlus.SetValueInt(1000)
 		Elseif iButton01 ==5
 			SkillPlus.SetValueInt(10000)
+		Elseif iButton01 ==6
+			SkillPlus.SetValueInt(100000)
 		endif
 	Else
 		;Remove by..
@@ -47,6 +49,8 @@ Function Menu()
 			SkillPlus.SetValueInt(-1000)
 		Elseif iButton01 ==5
 			SkillPlus.SetValueInt(-10000)
+		Elseif iButton01 ==6
+			SkillPlus.SetValueInt(-100000)
 		endif
 	endif
 endFunction
