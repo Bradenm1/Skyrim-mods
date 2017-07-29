@@ -1,0 +1,1 @@
+Scriptname BradDeathAltMain extends Quest  

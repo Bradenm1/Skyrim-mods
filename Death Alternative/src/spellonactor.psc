@@ -17,6 +17,8 @@ SPELL Property SoulTrap  Auto
 SPELL Property TurnUndead  Auto 
 SPELL Property GhostAbility  Auto  
 SPELL Property AbFXSovengardeGlow  Auto  
+SPELL Property DLC1SoulCairnGhostAbility  Auto  
+SPELL Property DLC1VQ04SoulTrap  Auto  
 
 Quest Property BradQuestAdd  Auto  
 
@@ -34,41 +36,48 @@ ImageSpaceModifier Property FadeToBlackBackImod  Auto
 GlobalVariable Property BradEndPackages  Auto
 
 Scene Property BradQuestAddAttackAttacker  Auto  
+Scene Property BradQuestAddTravelToPlayer Auto
 
 ReferenceAlias Property KillerAndMaster  Auto  
 ReferenceAlias Property GetAttacker  Auto    
 
+Package Property BradTravelToRadius  Auto  
+
 ;=======Fields=======
 Actor actorKiller
 Actor attackerEnemy
+bool hasHit
 
-
-;=======Constructor Event=======
-Event OnDeath(Actor akKiller)
-	actorKiller = aKKiller
-	;Run()
+Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile, bool abPowerAttack, bool abSneakAttack, bool abBashAttack, bool abHitBlocked)
+	if (Game.GetPlayer().IsDead())
+ 		havokPlayerUp(Utility.RandomInt(30, 50))
+ 	endif
+	Actor tempActor = akAggressor as Actor
+	;If (hasHit == false)
+	;	tempActor.AddItem(SoulGemBlack, 5)
+  	;	SoulTrap.Cast(tempActor, Game.GetPlayer())
+	;EndIf
+	hasHit = true
 EndEvent
 
-;Using Spell Method
-Event OnEffectStart(Actor akTarget, Actor akCaster)
-	actorKiller = akTarget
+Event OnDeath(Actor akKiller)
+	actorKiller = akKiller
+	GetStats()
 	Run()
 EndEvent
 
 ;=======CODE START=======
 ;/
-Double resurrected it needed or else your character will bug out, do not remove them. Always have two unless they're becoming a thrall, just have one.
+Double resurrected it needed or else your character will bug out, do not remove them. Always have two unless they are becoming a thrall, just have one
 /;
 
 Function Run()
 	Selection()
 	Utility.Wait(TIMETOREANIMATE)
-	EnableCam()
+	;EnableCam()
 	Utility.Wait(1)
 	AIEnable()
 	Main()
-	;EffectShader tempShade = BradEffects.GetAt(24) as EffectShader
-	;tempShade.Play(Game.GetPlayer(), -1.0)
 EndFunction
 
 Function Main()
@@ -86,26 +95,43 @@ Function Main()
 	EndWhile
 EndFunction
 
+Function GetStats()
+	KillerAndMaster.ForceRefTo(actorKiller)
+	;=======Player=======
+	Race playerRace = Game.GetPlayer().GetLeveledActorBase().GetRace()
+	int playerGender = Game.GetPlayer().GetActorBase().GetSex()
+	;=======Killer=======
+	Race killerrRace = actorKiller.GetLeveledActorBase().GetRace()
+	int killerGender = actorKiller.GetActorBase().GetSex()
+EndFunction
+
 Function Selection()
 	;=======Spells Selection=======
 	;=======Spells are shot at a another ref and not the player, to solve a bug=======
-	Int RandomSpell = Utility.RandomInt(5,5)
-	;1
+	Int RandomSpell = Utility.RandomInt(1, 1)
+	;Set to 1,1 for testing
 	;DemoFinaleFadeToBlack.Apply()
 	Utility.Wait(3)
-	BradSetPointsGo.MoveTo(Game.GetPlayer())
 	If RandomSpell == 0
 		;Become a ghost with dead player on the ground
 		;Game.GetPlayer().PlaceAtMe()
 		Game.GetPlayer().Resurrect()
 		Utility.Wait(WAITLEASTAMMOUNT)
-		actorKiller.DoCombatSpellApply(GhostAbility,  BradSetPointsGo)
+		GhostAbility.Cast(actorKiller, Game.GetPlayer())
 	Elseif RandomSpell == 1
 		;Become a thrall
-		actorKiller.DoCombatSpellApply(VampireRaiseThrall04,  BradSetPointsGo)
+		BradSetPointsGo.MoveTo(Game.GetPlayer())
+		Utility.Wait(0.2)
+		int index = 0
+		While (index < 10)
+			havokPlayerUp(50)
+			Utility.Wait(0.5)
+			index+= 1;
+		EndWhile
+		VampireRaiseThrall04.Cast(actorKiller, Game.GetPlayer())
 	Elseif RandomSpell == 2
 		;Become a zombie - Also burns to ash when killed
-		actorKiller.DoCombatSpellApply(RaiseZombie,  BradSetPointsGo)
+		RaiseZombie.Cast(actorKiller, Game.GetPlayer())
 	Elseif RandomSpell == 3
 		;Wake up in sovengarde
 		Game.GetPlayer().Resurrect()
@@ -119,16 +145,37 @@ Function Selection()
 		Utility.Wait(WAITLEASTAMMOUNT)
 		Game.GetPlayer().MoveTo(WhiteRunTemple)
 	Elseif RandomSpell == 5
-		;Become soul trapped and sent to soul cairn
-		;EffectShader tempShade = BradEffects.GetAt(204) as EffectShader
-		;tempShade.Play(Game.GetPlayer(), -1.0)
-		actorKiller.DoCombatSpellApply(SoulTrap,  BradSetPointsGo)
-		Utility.Wait(10)
-		;Game.GetPlayer().Resurrect()
-		;Utility.Wait(WAITLEASTAMMOUNT)
-		;Game.GetPlayer().AddSpell(DLC1SoulCairnGhostAbility)
-		;Game.GetPlayer().MoveTo(SoulCairnSpawn)
+		;Steal Items
+		;SoulTrap.Cast(actorKiller, Game.GetPlayer())
+		StopakTargetPackages()
+		GoToPlayer()
+		banditStripBodyEverything(actorKiller, 50)
 	EndIf
+	;actorKiller.StartCannibal(Game.GetPlayer())
+EndFunction
+
+Function StopakTargetPackages()
+	actorKiller.EvaluatePackage()
+EndFunction
+
+Function GoToPlayer()
+	BradQuestAddTravelToPlayer.Start()
+EndFunction
+
+bool Function banditStripBodyEverything(Actor bandit, int impulse)
+	Idle banditSearchBodyAnim = Game.GetFormFromFile(0x00075C3E, "Skyrim.ESM") as Idle
+	bandit.PlayIdle(banditSearchBodyAnim)
+	Utility.Wait(1)
+	unequipAllItems(impulse)
+EndFunction
+
+bool Function unequipAllItems(int impulse)
+	Game.GetPlayer().UnequipAll()
+	havokPlayerUp(impulse)
+EndFunction
+
+bool Function havokPlayerUp(int impulse)
+	Game.GetPlayer().ApplyHavokImpulse(0, 0, 1, impulse)
 EndFunction
 
 Function EnableCam()
@@ -190,6 +237,4 @@ Function AIEnable()
 	EndIf
 EndFunction
 
-SPELL Property DLC1SoulCairnGhostAbility  Auto  
-
-SPELL Property DLC1VQ04SoulTrap  Auto  
+SoulGem Property SoulGemBlack  Auto  
