@@ -16,25 +16,36 @@ int DEFAULTHEIGHT = 1
 float SETSCALEADDON = 0.100000
 float SETSCALEREMOVE = -0.1
 float FOLLOWERCONFIDENCERANK = 4.0
+int DISPLAYDEBUGINFOEVERY= 250
+int GIVEERRORAT = 2000
 
 ;=======Properties=======
-;Contains all ingredients
-FormList Property BradIngredientList  Auto  
 
 ;Points to a container which contains the duplication script
 ObjectReference Property BradDuplicationInputContainer  Auto  
+
+;=======Veriables=======
+
+;Used for actor on actor scripts
+Actor savedActor
+Quest debugQuest
+int debugStage
+int nCheat
+
+;=======Events=======
 
 ;Checks if player has the spell, if not give the spell
 Event OnInit()
 	Spell cheatSpell = Game.GetForm(0x05005909) as Spell
 	Spell cheatSpellPower = Game.GetForm(0x05014C13) as Spell
 	If (!Game.GetPlayer().HasSpell(cheatSpell))
+		Debug.MessageBox("Please save and reload that save to enable use of this mod")
 		Game.GetPlayer().AddSpell(cheatSpell, false)
 		Game.GetPlayer().AddSpell(cheatSpellPower, false)
 	Endif
 EndEvent
 
-;=======Cheats=======
+;=======Functions=======
 
 ;Add/Remove Souls to player
 Function AddSouls(int nSouls)
@@ -112,6 +123,7 @@ Function EditPerks(String skillName, int nSkillPoints, int setOrMod)
 	;1 = Set
 	;2 = Mod
 	;3 = Advance
+	;4 = Increment
 	if (setOrMod == 0)
 		float temp = Game.GetPlayer().GetActorValue(skillName) + nSkillPoints
 		Game.GetPlayer().SetActorValue(skillName, temp)
@@ -123,23 +135,31 @@ Function EditPerks(String skillName, int nSkillPoints, int setOrMod)
 		Else
 			Game.AdvanceSkill(skillName, nSkillPoints)
 		endIf
+	Elseif (SetorMod== 3)
+		If (nSkillPoints < 0)
+			Debug.MessageBox("Increment Skill Cannot be negative")
+		Else
+			Game.IncrementSkillBy(skillName, nSkillPoints)
+		endIf
 	endIf
 	Debug.Notification(skillName + " + " + nSkillPoints)
 EndFunction
 
 ;Teach player the 4 slots in all ingredients
 Function LearnAllIngredients()
+	;Contains all ingredients
+	FormList bradIngredientList =  Game.GetForm(0x05014C0C) as FormList
 	int index = 0
-	int count = 0
-	while (index <  BradIngredientList .GetSize())
-		Ingredient temp01 = BradIngredientList.getAt(index) as Ingredient
+	while (index <  bradIngredientList .GetSize())
+		Ingredient temp01 = bradIngredientList.getAt(index) as Ingredient
+		;Reset count for next ingredient in the list
+		int count = 0
 		while (count < 4)
 			if (temp01.LearnNextEffect() == count)
 				;Debug.Notification("Player learned the "+ count + " From the " + temp01)
 				count+= 1
 			endif
 		endwhile	
-		count = 0
 		index+= 1
 	endWhile
 endFunction
@@ -152,19 +172,19 @@ EndFunction
 
 ;Add all of type spell to the player
 Function AddAllTypeSpell(FormList spellList)
-	Int Index = 0
+	Int index = 0
 	while (Index < spellList.GetSize())
-		game.getplayer().addspell((spellList.getAt(Index) as Spell))
-		Index += 1
+		game.getplayer().addspell((spellList.getAt(index) as Spell))
+		index += 1
 	endWhile
 EndFunction
 
 ;Remove all of type spell to the player
 Function RemoveAllTypeSpell(FormList spellList)
-	Int Index = 0
-	while (Index < spellList.GetSize())
-		game.getplayer().removespell((spellList.getAt(Index) as Spell))
-		Index += 1
+	Int index = 0
+	while (index < spellList.GetSize())
+		game.getplayer().removespell((spellList.getAt(index) as Spell))
+		index += 1
 	endWhile
 EndFunction
 
@@ -190,6 +210,7 @@ Function RemoveAllItems(Actor akTarget)
 EndFunction
 
 ;Duplicate item from container to player
+;Needs to be called from duplication container
 Function Duplication(Form akBaseItem)
 	Game.GetPlayer().Additem(akBaseItem,1)
 EndFunction
@@ -197,7 +218,7 @@ EndFunction
 ;Cheats for NPC Cheat Options
 ;Need clearning up, kinda messy
 ; -> CheatRoomPlayerSpellCheat
-Function CheatOptionsSpell(Actor akTarget, Actor akCaster, int nCheat)
+Function CheatOptionsSpell(Actor akTarget, Actor akCaster)
 	;Menu 1
 	if nCheat == 1
 		;Make an actor a follower
@@ -327,13 +348,6 @@ Function CheatOptionsSpell(Actor akTarget, Actor akCaster, int nCheat)
 		akTarget.SetPlayerControls(true)
 		akTarget.EnableAI(True)
 		Game.SetPlayerAIDriven() 
-	;Elseif nCheat == 43
-	;	Actor temp = EndMindControl.GetAt(0) as Actor
-	;	Game.SetCameraTarget(Game.GetPlayer())
-	;	temp.SetPlayerControls(false)
-	;	temp.EnableAI(True)
-	;	Game.SetPlayerAIDriven(false) 
-	;	EndMindControl.Revert()
 	Elseif nCheat == 44
 		;Set Camera on actor
 		Game.ForceThirdPerson()
@@ -349,3 +363,91 @@ Function CheatOptionsSpell(Actor akTarget, Actor akCaster, int nCheat)
 		akTarget.Disable()
 	endif
 EndFunction
+
+;=======Quest Debugger=======
+
+;Currently Added as a filler untill code is organized
+FormList Property BradQuestDebugAll  Auto  
+
+GlobalVariable Property BradQuestDebugPosNeg  Auto  
+GlobalVariable Property BradQuestDebugStage  Auto  
+GlobalVariable Property BradQuestDebugQuest  Auto  
+
+Function AutoSelectQuest()
+;Auto Select Quest
+	Int index = 0 
+	Bool hasFound = False
+	While ((index < BradQuestDebugAll.GetSize()) && (hasFound == False))
+		Quest tempTempQuest = BradQuestDebugAll.getAt(index) as Quest
+		If (tempTempQuest.IsActive()) && (tempTempQuest.IsRunning())
+			BradQuestDebugQuest.SetValueInt(index)
+			Debug.MessageBox("Quest Found: " + tempTempQuest)
+			Debug.MessageBox("The quest has been set in your index")
+			hasFound = True
+		Else
+			If ((index % DISPLAYDEBUGINFOEVERY) == 0)
+				Debug.Notification("Please Wait... Entry " + index + "/ " + BradQuestDebugAll.GetSize())
+			EndIf
+			index += 1
+		EndIf
+	EndWhile
+	If hasFound == False
+		Debug.MessageBox("Could not find the quest. You either are trying to find a modded quest or don't have a quest marked as active")
+	endIf
+EndFunction
+
+Function AutoCompleteNextStage()
+	;Auto Complete Next Stage
+	Int index = 0
+	Int o = debugQuest.GetStage()
+	Bool tempCompleted = True
+	While tempCompleted == True
+		If (debugQuest.SetStage(o))
+			tempCompleted = False
+		Else
+			o += 1
+			index += 1
+			If (index > GIVEERRORAT)
+				tempCompleted = False
+				Debug.MessageBox("An error occured with the stages.")
+			EndIf
+		Endif
+	EndWhile
+	if (index < GIVEERRORAT)
+		Debug.MessageBox(o + " Stage Completed")
+	endif
+EndFunction
+
+;=======Gets/Sets=======
+
+int property SetNCheat
+	function set(int newNCheat)
+		If (newNCheat < 0)
+			Debug.MessageBox("An error occured, 'nCheat' is less then zero")
+		Else
+			nCheat = newNCheat
+		EndIf
+	EndFunction
+EndProperty
+
+Actor property GetSavedActor
+	Actor function get()
+		return savedActor
+  	EndFunction
+EndProperty
+
+Actor property SetSavedActor
+	function set(Actor newActor)
+		If (newActor == Game.GetPlayer())
+			Debug.MessageBox("An error occured, Player cannot be set as 'savedActor'")
+		Else
+			savedActor = newActor
+		EndIf
+	EndFunction
+EndProperty
+
+Quest property GetDebugQuest
+	Quest Function get()
+		Return debugQuest
+	EndFunction
+EndProperty
