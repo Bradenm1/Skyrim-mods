@@ -1,6 +1,16 @@
 Scriptname BradCheatMenuMain extends Quest  
 {Holds main scripts}
 
+;/////Properties/////;
+ObjectReference Property BradDuplicationInputContainer  Auto  
+
+Event OnInit()
+	Spell cheatSpell = Game.GetForm(0x05005909) as Spell
+	If (!Game.GetPlayer().HasSpell(cheatSpell))
+		Game.GetPlayer().AddSpell(cheatSpell)
+	Endif
+EndEvent
+
 ;/////Cheats/////;
 
 ;Add/Remove Souls to player
@@ -81,4 +91,9 @@ endFunction
 ;Remove All Player Items
 Function RemoveAllItems(Actor akTarget)
 	akTarget.RemoveAllItems()
+EndFunction
+
+;Duplicate item to player
+Function Duplication(Form akBaseItem)
+	Game.GetPlayer().Additem(akBaseItem,1)
 EndFunction
