@@ -27,15 +27,22 @@ ObjectReference Property BradDuplicationInputContainer  Auto
 ;=======Veriables=======
 
 ;Used for actor on actor scripts
+;====Cheat Spells====
 Actor savedActor
+int nCheat
+;====Quest Debugger====
+FormList  BradQuestDebugAll
 Quest debugQuest
 int debugStage
-int nCheat
+int stageIndex
+int questIndex
+int posNeg
 
 ;=======Events=======
 
 ;Checks if player has the spell, if not give the spell
 Event OnInit()
+	BradQuestDebugAll = Game.GetForm(0x05014C23) as FormList
 	Spell cheatSpell = Game.GetForm(0x05005909) as Spell
 	Spell cheatSpellPower = Game.GetForm(0x05014C13) as Spell
 	If (!Game.GetPlayer().HasSpell(cheatSpell))
@@ -366,13 +373,6 @@ EndFunction
 
 ;=======Quest Debugger=======
 
-;Currently Added as a filler untill code is organized
-FormList Property BradQuestDebugAll  Auto  
-
-GlobalVariable Property BradQuestDebugPosNeg  Auto  
-GlobalVariable Property BradQuestDebugStage  Auto  
-GlobalVariable Property BradQuestDebugQuest  Auto  
-
 Function AutoSelectQuest()
 ;Auto Select Quest
 	Int index = 0 
@@ -380,7 +380,7 @@ Function AutoSelectQuest()
 	While ((index < BradQuestDebugAll.GetSize()) && (hasFound == False))
 		Quest tempTempQuest = BradQuestDebugAll.getAt(index) as Quest
 		If (tempTempQuest.IsActive()) && (tempTempQuest.IsRunning())
-			BradQuestDebugQuest.SetValueInt(index)
+			questIndex = index
 			Debug.MessageBox("Quest Found: " + tempTempQuest)
 			Debug.MessageBox("The quest has been set in your index")
 			hasFound = True
@@ -449,5 +449,37 @@ EndProperty
 Quest property GetDebugQuest
 	Quest Function get()
 		Return debugQuest
+	EndFunction
+EndProperty
+
+int property GetStageIndex
+	int function get()
+		Return stageIndex
+	EndFunction
+EndProperty
+
+int property SetStageIndex
+	function set(int newStageIndex)
+		If (newStageIndex < 0)
+			Debug.MessageBox("An error occured, stage index cannot be set less then 0")
+		Else
+			stageIndex = newStageIndex
+		EndIf
+	EndFunction
+EndProperty
+
+int property GetQuestIndex
+	int function get()
+		Return questIndex
+	EndFunction
+EndProperty
+
+int property SetQuestIndex
+	function set(int newQuesIndex)
+		If (newQuesIndex < 0)
+			Debug.MessageBox("An error occured, quest index cannot be set less then 0")
+		Else
+			questIndex = newQuesIndex
+		EndIf
 	EndFunction
 EndProperty
