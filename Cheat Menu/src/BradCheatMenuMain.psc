@@ -44,17 +44,21 @@ int posNeg
 
 ;=======Events=======
 
-;Checks if player has the spell, if not give the spell
 Event OnInit()
+	;Declaring location
 	CreateActorValues()
 	posNeg = 0
 	questIndex = 0
 	stageIndex = 0
 	setOrMod = 0
+	posNeg = 0
+	nCheat = 0
 	shoutsList = Game.GetForm(0x05014C25) as FormList
 	BradQuestDebugAll = Game.GetForm(0x05014C23) as FormList
 	Spell cheatSpell = Game.GetForm(0x05005909) as Spell
 	Spell cheatSpellPower = Game.GetForm(0x05014C13) as Spell
+	
+	;Checks if player has the spell, if not give the spell
 	If (!Game.GetPlayer().HasSpell(cheatSpell))
 		Debug.MessageBox("Please save and reload that save to enable use of this mod")
 		Game.GetPlayer().AddSpell(cheatSpell, false)
@@ -76,13 +80,13 @@ Function AddSouls(int nSouls)
 	Endif
 EndFunction
 
-;Tech and unlock words
-Function TechAndUnlockShouts()
+;Unlock and teach words
+Function TeachAndUnlockShouts()
 	FormList wordOfPowerList = Game.GetForm(0x05014C26) as FormList
 	Int index = 0
 	while (index < wordOfPowerList.GetSize())
-		game.teachword(wordOfPowerList.getAt(index) as WordOfPower)
 		game.unlockword(wordOfPowerList.getAt(index) as WordOfPower)
+		game.teachword(wordOfPowerList.getAt(index) as WordOfPower)
 		index += 1
 	endWhile
 	Debug.MessageBox("Button is Done Adding!")
@@ -92,11 +96,11 @@ EndFunction
 Function AddShouts()
 	Debug.MessageBox("You'll get a prompt when the button is done")
 	Int index = 0
-		while (index < shoutsList.GetSize())
+	while (index < shoutsList.GetSize())
 		game.getplayer().addshout(shoutsList.GetAt(index) as Shout)
 		index += 1
 	endWhile
-	TechAndUnlockShouts()
+	TeachAndUnlockShouts()
 EndFunction
 
 ;Remove shouts from the player
@@ -257,22 +261,7 @@ Function CheatOptionsSpell(Actor akTarget, Actor akCaster)
 	Elseif nCheat == 6
 		;Open actor inventory
 		akTarget.OpenInventory(true)
-
-	;Menu 2 - PushActorAway
-	Elseif nCheat == 10
-		akTarget.PushActorAway(akTarget, 10.0)
-	Elseif nCheat== 11
-		akTarget.PushActorAway(akTarget, 20.0)
-	Elseif nCheat == 12
-		akTarget.PushActorAway(akTarget, 40.0)
-	Elseif nCheat == 13
-		akTarget.PushActorAway(akTarget, 80.0)
-	Elseif nCheat == 14
-		akTarget.PushActorAway(akTarget, 140.0)
-	Elseif nCheat == 15
-		akTarget.PushActorAway(akTarget, 280.0)
-	
-	;Menu 3 - Set Relationship ranks on actor
+	;Set Relationship ranks on actor
 	Elseif nCheat == 16
 		akTarget.SetRelationshipRank(Game.GetPlayer(), LOVERRANK)
 	Elseif nCheat== 17
@@ -291,8 +280,6 @@ Function CheatOptionsSpell(Actor akTarget, Actor akCaster)
 		akTarget.SetRelationshipRank(Game.GetPlayer(), ENEMY)
 	Elseif nCheat == 24
 		akTarget.SetRelationshipRank(Game.GetPlayer(), ARCHNEMESIS)
-
-	;Menu 4
 	Elseif nCheat == 25
 		;Able to marry actor
 		akTarget.SetRelationshipRank(Game.GetPlayer(), LOVERRANK)
@@ -319,8 +306,6 @@ Function CheatOptionsSpell(Actor akTarget, Actor akCaster)
 		;Set actor outfit as random
 		FormList  BradRandOutfit = Game.GetForm(0x05014C24) as FormList
 		akTarget.SetOutfit(BradRandOutfit.getAt(Utility.RandomInt(0,  BradRandOutfit.GetSize())) as Outfit)
-
-	;Menu 5
 	Elseif nCheat == 32
 		;Unequiped all actors items
 		akTarget.UnequipAll()
@@ -343,7 +328,7 @@ Function CheatOptionsSpell(Actor akTarget, Actor akCaster)
 		ActorBase temp = akTarget.GetActorBase()
 		akTarget.PlaceAtMe(akTarget.GetActorBase())
 
-	;Menu 6
+	;Change Size
 	Elseif nCheat == 39
 		;Make actor smaller
 		akTarget.SetScale(SETSCALEREMOVE + akTarget.GetScale())
@@ -356,6 +341,8 @@ Function CheatOptionsSpell(Actor akTarget, Actor akCaster)
 		;Make actor bigger
 		akTarget.SetScale(SETSCALEADDON + akTarget.GetScale())
 		Debug.Notification("Height = " + akTarget.GetScale())
+
+	;Control and set camera on Actor
 	Elseif nCheat == 42
 		;Control another actor
 		Game.ForceThirdPerson()
@@ -372,8 +359,9 @@ Function CheatOptionsSpell(Actor akTarget, Actor akCaster)
 		;Set Camera on actor
 		Game.ForceThirdPerson()
 		Game.SetCameraTarget(akTarget)
+	
+	;Divorce actor
 	Elseif nCheat == 45
-		;Divorce actor
 		Faction actorRemove = Game.GetForm(0x00051596) as Faction
 		Faction divorcePlayer = Game.GetForm(0x000C6472) as Faction
 		Quest DivorceQuest01 = Game.GetForm(0x00074793) as Quest
@@ -481,13 +469,35 @@ Function ChangingIndex(int indexToChange, int selection)
 	Elseif (selection ==1)
 		indexToChange = 0
 	Elseif (selection == 2)
-		valueToAdd = 1
+		if (posNeg == 0)
+			valueToAdd = -1
+		Else
+			valueToAdd = 1
+		EndIf
 	Elseif (selection == 3)
-		valueToAdd =  10
+		if (posNeg == 0)
+			valueToAdd =  -10
+		Else
+			valueToAdd =  10
+		EndIf
 	Elseif (selection == 4)
-		valueToAdd =  100
+		if (posNeg == 0)
+			valueToAdd =  -100
+		Else
+			valueToAdd =  100
+		EndIf
 	Elseif (selection == 5)
-		valueToAdd = 1000
+		if (posNeg == 0)
+			valueToAdd = -1000
+		Else
+			valueToAdd = 1000
+		EndIf
+	Elseif (selection == 6)
+		if (posNeg == 0)
+			valueToAdd = -10000
+		Else
+			valueToAdd = 10000
+		EndIf
 	Elseif (selection == 6)
 		Debug.MessageBox("Stage Index = " + indexToChange)
 	Endif
