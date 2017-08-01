@@ -22,14 +22,18 @@ int GIVEERRORAT = 2000
 ;=======Properties=======
 
 ;Points to a container which contains the duplication script
-ObjectReference Property BradDuplicationInputContainer  Auto  
+ObjectReference Property BradDuplicationInputContainer  Auto
 
 ;=======Veriables=======
 
 ;Used for actor on actor scripts
 ;====Cheat Spells====
+String[] actorValues
+FormList shoutsList
 Actor savedActor
+Actor controlledActor
 int nCheat
+int setOrMod
 ;====Quest Debugger====
 FormList  BradQuestDebugAll
 Quest debugQuest
@@ -42,6 +46,12 @@ int posNeg
 
 ;Checks if player has the spell, if not give the spell
 Event OnInit()
+	CreateActorValues()
+	posNeg = 0
+	questIndex = 0
+	stageIndex = 0
+	setOrMod = 0
+	shoutsList = Game.GetForm(0x05014C25) as FormList
 	BradQuestDebugAll = Game.GetForm(0x05014C23) as FormList
 	Spell cheatSpell = Game.GetForm(0x05005909) as Spell
 	Spell cheatSpellPower = Game.GetForm(0x05014C13) as Spell
@@ -54,6 +64,7 @@ EndEvent
 
 ;=======Functions=======
 
+;====Cheats====
 ;Add/Remove Souls to player
 Function AddSouls(int nSouls)
 	If (nSouls > 0)
@@ -67,11 +78,11 @@ EndFunction
 
 ;Tech and unlock words
 Function TechAndUnlockShouts()
-	FormList shouts
+	FormList wordOfPowerList = Game.GetForm(0x05014C26) as FormList
 	Int index = 0
-	while (index < shouts.GetSize())
-		game.teachword(shouts.getAt(index) as WordOfPower)
-		game.unlockword(shouts.getAt(index) as WordOfPower)
+	while (index < wordOfPowerList.GetSize())
+		game.teachword(wordOfPowerList.getAt(index) as WordOfPower)
+		game.unlockword(wordOfPowerList.getAt(index) as WordOfPower)
 		index += 1
 	endWhile
 	Debug.MessageBox("Button is Done Adding!")
@@ -79,11 +90,10 @@ EndFunction
 
 ;Add shouts to the player
 Function AddShouts()
-	Shout[] shouts
 	Debug.MessageBox("You'll get a prompt when the button is done")
 	Int index = 0
-	while (index < shouts.Length)
-		game.getplayer().addshout(shouts[index])
+		while (index < shoutsList.GetSize())
+		game.getplayer().addshout(shoutsList.GetAt(index) as Shout)
 		index += 1
 	endWhile
 	TechAndUnlockShouts()
@@ -91,10 +101,9 @@ EndFunction
 
 ;Remove shouts from the player
 Function RemoveShouts()
-	Shout[] shouts
 	Int index = 0
-	while (index < shouts.Length)
-		game.getplayer().removeshout(shouts[Index])
+	while (index < shoutsList.GetSize())
+		game.getplayer().removeshout(shoutsList.GetAt(index) as Shout)
 		index += 1
 	endWhile
 	Debug.MessageBox("Button is Done Removing!")
@@ -125,7 +134,7 @@ Function AddAllWVPerks(int nPerks, bool isVamp)
 	EndIf
 EndFunction
 
-Function EditPerks(String skillName, int nSkillPoints, int setOrMod)
+Function EditPerks(String skillName, int nSkillPoints)
 	;Check if adding by mod or set or advance
 	;1 = Set
 	;2 = Mod
@@ -308,7 +317,8 @@ Function CheatOptionsSpell(Actor akTarget, Actor akCaster)
 		akTarget.SetPlayerTeammate(false)
 	Elseif nCheat == 31
 		;Set actor outfit as random
-		;akTarget.SetOutfit(OutfitRand.getAt(Utility.RandomInt(0, OutfitRand.GetSize())) as Outfit)
+		FormList  BradRandOutfit = Game.GetForm(0x05014C24) as FormList
+		akTarget.SetOutfit(BradRandOutfit.getAt(Utility.RandomInt(0,  BradRandOutfit.GetSize())) as Outfit)
 
 	;Menu 5
 	Elseif nCheat == 32
@@ -349,33 +359,68 @@ Function CheatOptionsSpell(Actor akTarget, Actor akCaster)
 	Elseif nCheat == 42
 		;Control another actor
 		Game.ForceThirdPerson()
-		;EndMindControl.Revert()
-		;EndMindControl.AddForm(akTarget)
-		Game.SetCameraTarget(akTarget)
-		akTarget.SetPlayerControls(true)
-		akTarget.EnableAI(True)
+		Game.SetCameraTarget(controlledActor)
+		controlledActor.SetPlayerControls(true)
+		controlledActor.EnableAI(true)
 		Game.SetPlayerAIDriven() 
+	Elseif nCheat == 43
+		Game.SetCameraTarget(Game.GetPlayer())
+		controlledActor.SetPlayerControls(false)
+		controlledActor.EnableAI(true)
+		Game.SetPlayerAIDriven(false) 
 	Elseif nCheat == 44
 		;Set Camera on actor
 		Game.ForceThirdPerson()
 		Game.SetCameraTarget(akTarget)
 	Elseif nCheat == 45
 		;Divorce actor
-		;akTarget.RemoveFromFaction(DivorceRemoveFac)
-		;Game.GetPlayer().RemoveFromFaction(DivorcePlayerFac)
-		;DivorceQuest01.Reset()
-		;DivorceQuest02.Reset()
-		;DivorceQuest01.SetStage(DIVORCEQUEST)
+		Faction actorRemove = Game.GetForm(0x00051596) as Faction
+		Faction divorcePlayer = Game.GetForm(0x000C6472) as Faction
+		Quest DivorceQuest01 = Game.GetForm(0x00074793) as Quest
+		Quest DivorceQuest02 = Game.GetForm(0x00021382) as Quest
+		akTarget.RemoveFromFaction(actorRemove)
+		Game.GetPlayer().RemoveFromFaction(divorcePlayer)
+		DivorceQuest01.Reset()
+		DivorceQuest02.Reset()
+		DivorceQuest01.SetStage(DIVORCEQUEST)
 	Elseif nCheat == 46
 		akTarget.Disable()
 	endif
 EndFunction
 
-;=======Quest Debugger=======
+;Adds an selected amount to all skills on the player
+Function AddToAllSkills(int addAmount)
+	float temp
+	int index = 0
+	while (index < actorValues.Length)
+		if (setOrMod == 0)
+			temp = Game.GetPlayer().GetActorValue(actorValues[index]) + addAmount
+			Game.GetPlayer().SetActorValue(actorValues[index],  temp)
+		Elseif (setOrMod == 1)
+			Game.GetPlayer().ModActorValue(actorValues[index],  addAmount)
+		Elseif (setOrMod == 2)
+			If (addAmount < 0)
+				Debug.MessageBox("Advance Skill Cannot be negative")
+			Else
+				Game.AdvanceSkill(actorValues[index],  addAmount)
+			endIf
+		endIf
+		Debug.Notification(actorValues[index] + " + " + addAmount)
+		index+= 1
+	endWhile
+	Debug.MessageBox("Button is Done")
+EndFunction
 
+;====Free Camerar====
+
+;Add later
+
+;====Quest Debugger====
+
+;Auto select the quest using the seletion from the journal
 Function AutoSelectQuest()
 ;Auto Select Quest
-	Int index = 0 
+	Int index = 0
 	Bool hasFound = False
 	While ((index < BradQuestDebugAll.GetSize()) && (hasFound == False))
 		Quest tempTempQuest = BradQuestDebugAll.getAt(index) as Quest
@@ -396,12 +441,13 @@ Function AutoSelectQuest()
 	endIf
 EndFunction
 
+;Auto complete next stage of the curret selected quest
 Function AutoCompleteNextStage()
 	;Auto Complete Next Stage
 	Int index = 0
 	Int o = debugQuest.GetStage()
 	Bool tempCompleted = True
-	While tempCompleted == True
+	While (tempCompleted == True)
 		If (debugQuest.SetStage(o))
 			tempCompleted = False
 		Else
@@ -416,6 +462,148 @@ Function AutoCompleteNextStage()
 	if (index < GIVEERRORAT)
 		Debug.MessageBox(o + " Stage Completed")
 	endif
+EndFunction
+
+;Changes the index of given int
+Function ChangingIndex(int indexToChange, int selection)
+	int valueToAdd = 0
+	;Pos
+	if (selection == 0)
+		If (posNeg == 1)
+			;Neg
+			posNeg = 0
+			Debug.Notification("Set to negative")
+		Else
+			;Pos
+			posNeg = 1
+			Debug.Notification("Set to positive")
+		EndIf
+	Elseif (selection ==1)
+		indexToChange = 0
+	Elseif (selection == 2)
+		valueToAdd = 1
+	Elseif (selection == 3)
+		valueToAdd =  10
+	Elseif (selection == 4)
+		valueToAdd =  100
+	Elseif (selection == 5)
+		valueToAdd = 1000
+	Elseif (selection == 6)
+		Debug.MessageBox("Stage Index = " + indexToChange)
+	Endif
+	If (valueToAdd != 0)
+		indexToChange += valueToAdd
+		Debug.Notification(indexToChange)
+	EndIf
+EndFunction
+
+;Creates the array because of issues with properties
+Function CreateActorValues()
+	actorValues = new String[104]
+	actorValues[0] = "Health"
+	actorValues[1] = "Magicka"
+	actorValues[2] = "Stamina"
+	actorValues[3] = "OneHanded"
+	actorValues[4] = "TwoHanded"
+	actorValues[5] = "Marksman"
+	actorValues[6] = "Block"
+	actorValues[7] = "Smithing"
+	actorValues[8] = "HeavyArmor"
+	actorValues[9] = "LightArmor"
+	actorValues[10] = "Pickpocket"
+	actorValues[11] = "Lockpicking"
+	actorValues[12] = "Sneak"
+	actorValues[13] = "Alchemy"
+	actorValues[14] = "Speechcraft"
+	actorValues[15] = "Alteration"
+	actorValues[16] = "Conjuration"
+	actorValues[17] = "Destruction"
+	actorValues[18] = "Illusion"
+	actorValues[19] = "Restoration"
+	actorValues[20] = "Enchanting"
+	actorValues[21] = "Aggression"
+	actorValues[22] = "Confidence"
+	actorValues[23] = "Energy"
+	actorValues[24] = "Morality"
+	actorValues[25] = "Mood"
+	actorValues[26] = "Assistance"
+	actorValues[27] = "WaitingForPlayer"
+	actorValues[28] = "HealRate"
+	actorValues[29] = "MagickaRate"
+	actorValues[30] = "StaminaRate"
+	actorValues[31] = "attackDamageMult"
+	actorValues[32] = "SpeedMult"
+	actorValues[33] = "ShoutRecoveryMult"
+	actorValues[34] = "WeaponSpeedMult"
+	actorValues[35] = "DestructionMod"
+	actorValues[36] = "DestructionPowerMod"
+	actorValues[37] = "AlterationMod"
+	actorValues[38] = "AlterationPowerMod"
+	actorValues[39] = "IllusionMod"
+	actorValues[40] = "IllusionPowerMod"
+	actorValues[41] = "RestorationMod"
+	actorValues[42] = "RestorationPowerMod"
+	actorValues[43] = "ConjurationMod"
+	actorValues[44] = "ConjurationPowerMod"
+	actorValues[45] = "InventoryWeight"
+	actorValues[46] = "CarryWeight"
+	actorValues[47] = "CritChance"
+	actorValues[48] = "MeleeDamage"
+	actorValues[49] = "UnarmedDamage"
+	actorValues[50] = "Mass"
+	actorValues[51] = "VoicePoints"
+	actorValues[52] = "VoiceRate"
+	actorValues[53] = "DamageResist"
+	actorValues[54] = "DiseaseResist"
+	actorValues[55] = "PoisonResist"
+	actorValues[56] = "FireResist"
+	actorValues[57] = "ElectricResist"
+	actorValues[58] = "FrostResist"
+	actorValues[59] = "MagicResist"
+	actorValues[60] = "Paralysis"
+	actorValues[61] = "Invisibility"
+	actorValues[62] = "NightEye"
+	actorValues[63] = "DetectLifeRange"
+	actorValues[64] = "WaterBreathing"
+	actorValues[65] = "WaterWalking"
+	actorValues[66] = "JumpingBonus"
+	actorValues[67] = "WardPower"
+	actorValues[68] = "WardDeflection"
+	actorValues[69] = "EquippedItemCharge"
+	actorValues[70] = "EquippedStaffCharge"
+	actorValues[71] = "ArmorPerks"
+	actorValues[72] = "ShieldPerks"
+	actorValues[73] = "BowSpeedBonus"
+	actorValues[74] = "DragonSouls"
+	actorValues[75] = "Variable01"
+	actorValues[76] = "Variable02"
+	actorValues[77] = "Variable03"
+	actorValues[78] = "Variable04"
+	actorValues[79] = "Variable06"
+	actorValues[80] = "Variable07"
+	actorValues[81] = "Variable08"
+	actorValues[82] = "Variable09"
+	actorValues[83] = "Variable10"
+	actorValues[84] = "CombatHealthRegenMultMod"
+	actorValues[85] = "CombatHealthRegenMultPowerMod"
+	actorValues[86] = "PerceptionCondition"
+	actorValues[87] = "EnduranceCondition"
+	actorValues[88] = "LeftAttackCondition"
+	actorValues[89] = "RightAttackCondition"
+	actorValues[90] = "LeftMobilityCondition"
+	actorValues[91] = "RightMobilityCondition"
+	actorValues[92] = "BrainCondition"
+	actorValues[93] = "IgnoreCrippledLimbs"
+	actorValues[94] = "Fame"
+	actorValues[95] = "Infamy"
+	actorValues[96] = "FavorActive"
+	actorValues[97] = "FavorPointsBonus"
+	actorValues[98] = "FavorsPerDay"
+	actorValues[99] = "FavorsPerDayTimer"
+	actorValues[100] = "BypassVendorStolenCheck"
+	actorValues[101] = "BypassVendorKeywordCheck"
+	actorValues[102] = "LastBribedIntimidated"
+	actorValues[103] = "LastFlattered"
 EndFunction
 
 ;=======Gets/Sets=======
