@@ -30,6 +30,10 @@ ObjectReference Property BradDuplicationInputContainer  Auto
 ;====Cheat Spells====
 String[] actorValues
 FormList shoutsList
+FormList perksList
+FormList effectShadersList
+FormList imageSpaceModifiersList
+FormList weathersList
 Actor savedActor
 Actor controlledActor
 int nCheat
@@ -55,6 +59,11 @@ Event OnInit()
 	nCheat = 0
 	shoutsList = Game.GetForm(0x05014C25) as FormList
 	BradQuestDebugAll = Game.GetForm(0x05014C23) as FormList
+	perksList = Game.GetForm(0x05014C27) as FormList
+	effectShadersList = Game.GetForm(0x005014C29) as FormList
+	imageSpaceModifiersList = Game.GetForm(0x05014C2A) as FormList
+	weathersList = Game.GetForm(0x05014C2B) as FormList
+
 	Spell cheatSpell = Game.GetForm(0x05005909) as Spell
 	Spell cheatSpellPower = Game.GetForm(0x05014C13) as Spell
 	
@@ -93,21 +102,23 @@ Function TeachAndUnlockShouts()
 EndFunction
 
 ;Add shouts to the player
-Function AddShouts()
+Function AddShouts(Actor actorToApply)
 	Debug.MessageBox("You'll get a prompt when the button is done")
 	Int index = 0
 	while (index < shoutsList.GetSize())
-		game.getplayer().addshout(shoutsList.GetAt(index) as Shout)
+		actorToApply.addshout(shoutsList.GetAt(index) as Shout)
 		index += 1
 	endWhile
-	TeachAndUnlockShouts()
+	If (actorToApply == Game.GetPlayer())
+		TeachAndUnlockShouts()
+	EndIf
 EndFunction
 
 ;Remove shouts from the player
-Function RemoveShouts()
+Function RemoveShouts(Actor actorToApply)
 	Int index = 0
 	while (index < shoutsList.GetSize())
-		game.getplayer().removeshout(shoutsList.GetAt(index) as Shout)
+		actorToApply.removeshout(shoutsList.GetAt(index) as Shout)
 		index += 1
 	endWhile
 	Debug.MessageBox("Button is Done Removing!")
@@ -138,17 +149,17 @@ Function AddAllWVPerks(int nPerks, bool isVamp)
 	EndIf
 EndFunction
 
-Function EditPerks(String skillName, int nSkillPoints)
+Function EditStats(String skillName, int nSkillPoints, Actor actorToApply)
 	;Check if adding by mod or set or advance
 	;1 = Set
 	;2 = Mod
 	;3 = Advance
 	;4 = Increment
 	if (setOrMod == 0)
-		float temp = Game.GetPlayer().GetActorValue(skillName) + nSkillPoints
-		Game.GetPlayer().SetActorValue(skillName, temp)
+		float temp = actorToApply.GetActorValue(skillName) + nSkillPoints
+		actorToApply.SetActorValue(skillName, temp)
 	Elseif (SetorMod == 1)
-		Game.GetPlayer().ModActorValue(skillName, nSkillPoints)
+		actorToApply.ModActorValue(skillName, nSkillPoints)
 	Elseif (SetorMod== 2)
 		If (nSkillPoints < 0)
 			Debug.MessageBox("Advance Skill Cannot be negative")
@@ -163,6 +174,38 @@ Function EditPerks(String skillName, int nSkillPoints)
 		endIf
 	endIf
 	Debug.Notification(skillName + " + " + nSkillPoints)
+EndFunction
+
+;Apply effect shader to actor
+Function ApplyEffectShader(int effectShaderToApply, Actor actorToApply)
+	;-1 equals the effect will last forever untill removed by a script
+	EffectShader effect = effectShadersList.GetAt(effectShaderToApply) as EffectShader
+	 effect.Play(actorToApply, -1)
+EndFunction
+
+;Remove effect shader from actor
+Function RemoveEffectShader(int effectShaderToApply, Actor actorToApply)
+	EffectShader effect = effectShadersList.GetAt(effectShaderToApply) as EffectShader
+	 effect.Stop(actorToApply)
+EndFunction
+
+;Changes current active weather
+Function ChangeWeather(int weatherToApply)
+	;Has to be release override to remove the selected weather
+	Weather weatherEffect = weathersList.GetAt(weatherToApply) as Weather
+	weatherEffect.ForceActive(True)
+EndFunction
+
+;Apply an imagespace modifier
+Function ApplyImageSpaceModifier(int imageSpaceModifierToApply)
+	ImageSpaceModifier imagespaceEffect = imageSpaceModifiersList.GetAt(imageSpaceModifierToApply) as ImageSpaceModifier
+	imagespaceEffect.Apply()
+EndFunction
+
+;Remove an imagespace modifier
+Function RemoveImageSpaceModifier(int imageSpaceModifierToApply)
+	ImageSpaceModifier imagespaceEffect = imageSpaceModifiersList.GetAt(imageSpaceModifierToApply) as ImageSpaceModifier
+	imagespaceEffect.Remove()
 EndFunction
 
 ;Teach player the 4 slots in all ingredients
@@ -185,25 +228,43 @@ Function LearnAllIngredients()
 endFunction
 
 ;Add coins to the player
-Function AddCoins(int nCoins)
+Function AddCoins(int nCoins, Actor actorToApply)
 	MiscObject coin = Game.GetForm(0x000000F) as MiscObject
-	Game.GetPlayer().Additem(coin, nCoins)
+	actorToApply.Additem(coin, nCoins)
 EndFunction
 
 ;Add all of type spell to the player
-Function AddAllTypeSpell(FormList spellList)
+Function AddAllTypeSpell(FormList spellList, Actor actorToApply)
 	Int index = 0
 	while (Index < spellList.GetSize())
-		game.getplayer().addspell((spellList.getAt(index) as Spell))
+		actorToApply.addspell((spellList.getAt(index) as Spell))
 		index += 1
 	endWhile
 EndFunction
 
 ;Remove all of type spell to the player
-Function RemoveAllTypeSpell(FormList spellList)
+Function RemoveAllTypeSpell(FormList spellList, Actor actorToApply)
 	Int index = 0
 	while (index < spellList.GetSize())
-		game.getplayer().removespell((spellList.getAt(index) as Spell))
+		actorToApply.removespell((spellList.getAt(index) as Spell))
+		index += 1
+	endWhile
+EndFunction
+
+;Add all perks to player
+Function Perks()
+	Int index = 0
+	while (Index < perksList.GetSize())
+		game.getplayer().AddPerk(perksList.getAt(index) as Perk)
+		index += 1
+	endWhile
+EndFunction
+
+;Remove all perks from player
+Function PerksRemove()
+	Int index = 0
+	while (Index < perksList.GetSize())
+		game.getplayer().RemovePerk(perksList.getAt(index) as Perk)
 		index += 1
 	endWhile
 EndFunction
@@ -242,10 +303,17 @@ Function CheatOptionsSpell(Actor akTarget, Actor akCaster)
 	;Menu 1
 	if nCheat == 1
 		;Make an actor a follower
+		Faction actorAddFollower = Game.GetForm(0x0005C84D) as Faction
 		akTarget.SetRelationshipRank(Game.GetPlayer(), LOVERRANK)
-		;akTarget.AddToFaction(FirstFac)
-		;akTarget.AddToFaction(SecFac)
+		akTarget.AddToFaction(actorAddFollower)
 		akTarget.SetAV("confidence", FOLLOWERCONFIDENCERANK)
+	;Elseif nCheat== 47
+		;;Set ActorBase as follower
+		;Faction actorAddFollower = Game.GetForm(0x0005C84D) as Faction
+		;ActorBase akTargetBase = akTarget.GetActorBase()
+		;akTargetBase.SetRelationshipRank(Game.GetPlayer(), LOVERRANK)
+		;akTargetBase.AddToFaction(actorAddFollower)
+		;akTargetBase.SetAV("confidence", FOLLOWERCONFIDENCERANK)
 	Elseif nCheat== 2
 		;Slient kill actor
 		akTarget.Kill()
@@ -282,9 +350,10 @@ Function CheatOptionsSpell(Actor akTarget, Actor akCaster)
 		akTarget.SetRelationshipRank(Game.GetPlayer(), ARCHNEMESIS)
 	Elseif nCheat == 25
 		;Able to marry actor
+		Faction actorAddMarriage = Game.GetForm(0x00019809) as Faction
 		akTarget.SetRelationshipRank(Game.GetPlayer(), LOVERRANK)
 		akTarget.SetAV("confidence", FOLLOWERCONFIDENCERANK)
-		;akTarget.AddToFaction(ThirdFac)
+		akTarget.AddToFaction(actorAddMarriage)
 	Elseif nCheat== 26
 		;Set actor killable
 		akTarget.GetActorBase().SetEssential(false)
@@ -351,6 +420,7 @@ Function CheatOptionsSpell(Actor akTarget, Actor akCaster)
 		controlledActor.EnableAI(true)
 		Game.SetPlayerAIDriven() 
 	Elseif nCheat == 43
+		;Disable actor control
 		Game.SetCameraTarget(Game.GetPlayer())
 		controlledActor.SetPlayerControls(false)
 		controlledActor.EnableAI(true)
@@ -372,20 +442,21 @@ Function CheatOptionsSpell(Actor akTarget, Actor akCaster)
 		DivorceQuest02.Reset()
 		DivorceQuest01.SetStage(DIVORCEQUEST)
 	Elseif nCheat == 46
+		;Disable Actor
 		akTarget.Disable()
 	endif
 EndFunction
 
 ;Adds an selected amount to all skills on the player
-Function AddToAllSkills(int addAmount)
+Function AddToAllSkills(int addAmount, Actor actorToApply)
 	float temp
 	int index = 0
 	while (index < actorValues.Length)
 		if (setOrMod == 0)
-			temp = Game.GetPlayer().GetActorValue(actorValues[index]) + addAmount
-			Game.GetPlayer().SetActorValue(actorValues[index],  temp)
+			temp = actorToApply.GetActorValue(actorValues[index]) + addAmount
+			actorToApply.SetActorValue(actorValues[index],  temp)
 		Elseif (setOrMod == 1)
-			Game.GetPlayer().ModActorValue(actorValues[index],  addAmount)
+			actorToApply.ModActorValue(actorValues[index],  addAmount)
 		Elseif (setOrMod == 2)
 			If (addAmount < 0)
 				Debug.MessageBox("Advance Skill Cannot be negative")
@@ -399,7 +470,7 @@ Function AddToAllSkills(int addAmount)
 	Debug.MessageBox("Button is Done")
 EndFunction
 
-;====Free Camerar====
+;====Free Camera====
 
 ;Add later
 
