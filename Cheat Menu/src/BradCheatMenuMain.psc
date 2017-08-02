@@ -18,6 +18,28 @@ float SETSCALEREMOVE = -0.1
 float FOLLOWERCONFIDENCERANK = 4.0
 int DISPLAYDEBUGINFOEVERY= 250
 int GIVEERRORAT = 2000
+;====FormList Spells====
+int SPELLSABLILITES = 0
+int SPELLSDISEASES = 1
+int SPELLSLESSERPOWER= 2
+int SPELLSPOISON = 3
+int SPELLSPOWER = 4
+int SPELLSSHOUTS = 5
+int SPELLSSPELLS = 6
+;====Memory Addresses====;
+int STARTINGSPELLADDRESS = 0x05005909
+int STARTINGSPELLPOWERADDRESS = 0x05014C13
+int SPELLSLISTADDRESS = 0x05014C31
+int ALLWORDFPOWERADDRESS = 0x05014C26
+int ALLQUESTSADDRESS = 0x05014C23
+int ALLPERKSADDRESS = 0x05014C27
+int ALLEFFECTSADDRESS = 0x005014C29
+int ALLIMAGESPACEMODIFIERSADDRESS = 0x05014C2A
+int ALLWEATHERADDRESS = 0x05014C2B
+int ALLVAMPIREPERKSADDRESS = 0x02006938
+int ALLWEREWOLFPERKSADDRESS = 0x02006939
+int ALLINGREDIENTSADDRESS = 0x05014C0C
+int COINSADDRESS = 0x000000F
 
 ;=======Properties=======
 
@@ -29,7 +51,8 @@ ObjectReference Property BradDuplicationInputContainer  Auto
 ;Used for actor on actor scripts
 ;====Cheat Spells====
 String[] actorValues
-FormList shoutsList
+	;SpellsList contains more Formlists of type Ablilites, Diseases, LesserPower, Posion, Power and Spells.
+FormList spellsList
 FormList perksList
 FormList effectShadersList
 FormList imageSpaceModifiersList
@@ -57,15 +80,15 @@ Event OnInit()
 	setOrMod = 0
 	posNeg = 0
 	nCheat = 0
-	shoutsList = Game.GetForm(0x05014C25) as FormList
-	BradQuestDebugAll = Game.GetForm(0x05014C23) as FormList
-	perksList = Game.GetForm(0x05014C27) as FormList
-	effectShadersList = Game.GetForm(0x005014C29) as FormList
-	imageSpaceModifiersList = Game.GetForm(0x05014C2A) as FormList
-	weathersList = Game.GetForm(0x05014C2B) as FormList
+	spellsList = Game.GetForm(SPELLSLISTADDRESS) as FormList
+	BradQuestDebugAll = Game.GetForm(ALLQUESTSADDRESS) as FormList
+	perksList = Game.GetForm(ALLPERKSADDRESS) as FormList
+	effectShadersList = Game.GetForm(ALLEFFECTSADDRESS) as FormList
+	imageSpaceModifiersList = Game.GetForm(ALLIMAGESPACEMODIFIERSADDRESS) as FormList
+	weathersList = Game.GetForm(ALLWEATHERADDRESS) as FormList
 
-	Spell cheatSpell = Game.GetForm(0x05005909) as Spell
-	Spell cheatSpellPower = Game.GetForm(0x05014C13) as Spell
+	Spell cheatSpell = Game.GetForm(STARTINGSPELLADDRESS) as Spell
+	Spell cheatSpellPower = Game.GetForm(STARTINGSPELLPOWERADDRESS) as Spell
 	
 	;Checks if player has the spell, if not give the spell
 	If (!Game.GetPlayer().HasSpell(cheatSpell))
@@ -91,7 +114,7 @@ EndFunction
 
 ;Unlock and teach words
 Function TeachAndUnlockShouts()
-	FormList wordOfPowerList = Game.GetForm(0x05014C26) as FormList
+	FormList wordOfPowerList = Game.GetForm(ALLWORDFPOWERADDRESS) as FormList
 	Int index = 0
 	while (index < wordOfPowerList.GetSize())
 		game.unlockword(wordOfPowerList.getAt(index) as WordOfPower)
@@ -103,10 +126,11 @@ EndFunction
 
 ;Add shouts to the player
 Function AddShouts(Actor actorToApply)
+	FormList shoutsFormList = spellsList.GetAt(SPELLSSHOUTS) as FormList
 	Debug.MessageBox("You'll get a prompt when the button is done")
 	Int index = 0
-	while (index < shoutsList.GetSize())
-		actorToApply.addshout(shoutsList.GetAt(index) as Shout)
+	while (index < shoutsFormList .GetSize())
+		actorToApply.addshout(shoutsFormList.GetAt(index) as Shout)
 		index += 1
 	endWhile
 	If (actorToApply == Game.GetPlayer())
@@ -116,9 +140,10 @@ EndFunction
 
 ;Remove shouts from the player
 Function RemoveShouts(Actor actorToApply)
+	FormList shoutsFormList = spellsList.GetAt(SPELLSSHOUTS) as FormList
 	Int index = 0
-	while (index < shoutsList.GetSize())
-		actorToApply.removeshout(shoutsList.GetAt(index) as Shout)
+	while (index < shoutsFormList .GetSize())
+		actorToApply.removeshout(shoutsFormList.GetAt(index) as Shout)
 		index += 1
 	endWhile
 	Debug.MessageBox("Button is Done Removing!")
@@ -140,11 +165,11 @@ Function AddAllWVPerks(int nPerks, bool isVamp)
 	;For all to be filled the nPerk should be 100
 	if (isVamp)
 		;If wants to add perks to vampire
-		GlobalVariable vampPerks = Game.GetForm(0x02006938) as GlobalVariable ;Points to the global which contains count of perks for vamp
+		GlobalVariable vampPerks = Game.GetForm(ALLVAMPIREPERKSADDRESS) as GlobalVariable ;Points to the global which contains count of perks for vamp
 		vampPerks.SetValueInt(nPerks)
 	Else
 		;If wants to add perks to werewolf
-		GlobalVariable wolfPerks = Game.GetForm(0x02006939) as GlobalVariable ;Points to global which contains count of perks for wolf
+		GlobalVariable wolfPerks = Game.GetForm(ALLWEREWOLFPERKSADDRESS) as GlobalVariable ;Points to global which contains count of perks for wolf
 		wolfPerks.SetValueInt(nPerks)
 	EndIf
 EndFunction
@@ -211,7 +236,7 @@ EndFunction
 ;Teach player the 4 slots in all ingredients
 Function LearnAllIngredients()
 	;Contains all ingredients
-	FormList bradIngredientList =  Game.GetForm(0x05014C0C) as FormList
+	FormList bradIngredientList =  Game.GetForm(ALLINGREDIENTSADDRESS) as FormList
 	int index = 0
 	while (index <  bradIngredientList .GetSize())
 		Ingredient temp01 = bradIngredientList.getAt(index) as Ingredient
@@ -229,7 +254,7 @@ endFunction
 
 ;Add coins to the player
 Function AddCoins(int nCoins, Actor actorToApply)
-	MiscObject coin = Game.GetForm(0x000000F) as MiscObject
+	MiscObject coin = Game.GetForm(COINSADDRESS) as MiscObject
 	actorToApply.Additem(coin, nCoins)
 EndFunction
 
@@ -580,7 +605,7 @@ EndFunction
 
 ;Creates the array because of issues with properties
 Function CreateActorValues()
-	actorValues = new String[104]
+	actorValues = new String[105]
 	actorValues[0] = "Health"
 	actorValues[1] = "Magicka"
 	actorValues[2] = "Stamina"
@@ -660,6 +685,7 @@ Function CreateActorValues()
 	actorValues[76] = "Variable02"
 	actorValues[77] = "Variable03"
 	actorValues[78] = "Variable04"
+	actorValues[104] = "Variable04" 	;Missed it
 	actorValues[79] = "Variable06"
 	actorValues[80] = "Variable07"
 	actorValues[81] = "Variable08"
