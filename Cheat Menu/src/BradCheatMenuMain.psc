@@ -27,8 +27,8 @@ int SPELLSPOWER = 4
 int SPELLSSHOUTS = 5
 int SPELLSSPELLS = 6
 ;====Memory Addresses====;
-int STARTINGSPELLADDRESS = 0x05005909
-int STARTINGSPELLPOWERADDRESS = 0x05014C13
+int STARTINGSPELLADDRESS = 0x00005909
+int STARTINGSPELLPOWERADDRESS = 0x00014C13
 int SPELLSLISTADDRESS = 0x05014C31
 int ALLWORDFPOWERADDRESS = 0x05014C26
 int ALLQUESTSADDRESS = 0x05014C23
@@ -80,21 +80,21 @@ Event OnInit()
 	setOrMod = 0
 	posNeg = 0
 	nCheat = 0
-	spellsList = Game.GetForm(SPELLSLISTADDRESS) as FormList
-	BradQuestDebugAll = Game.GetForm(ALLQUESTSADDRESS) as FormList
-	perksList = Game.GetForm(ALLPERKSADDRESS) as FormList
-	effectShadersList = Game.GetForm(ALLEFFECTSADDRESS) as FormList
-	imageSpaceModifiersList = Game.GetForm(ALLIMAGESPACEMODIFIERSADDRESS) as FormList
-	weathersList = Game.GetForm(ALLWEATHERADDRESS) as FormList
+	spellsList = Game.GetFormFromFile(SPELLSLISTADDRESS, "CheatMenu.esp") as FormList
+	BradQuestDebugAll = Game.GetFormFromFile(ALLQUESTSADDRESS, "CheatMenu.esp") as FormList
+	perksList = Game.GetFormFromFile(ALLPERKSADDRESS, "CheatMenu.esp") as FormList
+	effectShadersList = Game.GetFormFromFile(ALLEFFECTSADDRESS, "CheatMenu.esp") as FormList
+	imageSpaceModifiersList = Game.GetFormFromFile(ALLIMAGESPACEMODIFIERSADDRESS, "CheatMenu.esp") as FormList
+	weathersList = Game.GetFormFromFile(ALLWEATHERADDRESS, "CheatMenu.esp") as FormList
 
-	Spell cheatSpell = Game.GetForm(STARTINGSPELLADDRESS) as Spell
-	Spell cheatSpellPower = Game.GetForm(STARTINGSPELLPOWERADDRESS) as Spell
+	Spell cheatSpell = Game.GetFormFromFile(STARTINGSPELLADDRESS, "CheatMenu.esp") as Spell
+	Spell cheatSpellPower = Game.GetFormFromFile(STARTINGSPELLPOWERADDRESS, "CheatMenu.esp") as Spell
 	
 	;Checks if player has the spell, if not give the spell
 	If (!Game.GetPlayer().HasSpell(cheatSpell))
 		Debug.MessageBox("Please save and reload that save to enable use of this mod")
-		Game.GetPlayer().AddSpell(cheatSpell, false)
-		Game.GetPlayer().AddSpell(cheatSpellPower, false)
+		Game.GetPlayer().AddSpell(cheatSpell)
+		Game.GetPlayer().AddSpell(cheatSpellPower)
 	Endif
 EndEvent
 
@@ -165,11 +165,11 @@ Function AddAllWVPerks(int nPerks, bool isVamp)
 	;For all to be filled the nPerk should be 100
 	if (isVamp)
 		;If wants to add perks to vampire
-		GlobalVariable vampPerks = Game.GetForm(ALLVAMPIREPERKSADDRESS) as GlobalVariable ;Points to the global which contains count of perks for vamp
+		GlobalVariable vampPerks = Game.GetFormFromFile(ALLVAMPIREPERKSADDRESS, "CheatMenu.esp") as GlobalVariable ;Points to the global which contains count of perks for vamp
 		vampPerks.SetValueInt(nPerks)
 	Else
 		;If wants to add perks to werewolf
-		GlobalVariable wolfPerks = Game.GetForm(ALLWEREWOLFPERKSADDRESS) as GlobalVariable ;Points to global which contains count of perks for wolf
+		GlobalVariable wolfPerks = Game.GetFormFromFile(ALLWEREWOLFPERKSADDRESS, "CheatMenu.esp") as GlobalVariable ;Points to global which contains count of perks for wolf
 		wolfPerks.SetValueInt(nPerks)
 	EndIf
 EndFunction
@@ -236,7 +236,7 @@ EndFunction
 ;Teach player the 4 slots in all ingredients
 Function LearnAllIngredients()
 	;Contains all ingredients
-	FormList bradIngredientList =  Game.GetForm(ALLINGREDIENTSADDRESS) as FormList
+	FormList bradIngredientList =  Game.GetFormFromFile(ALLINGREDIENTSADDRESS, "CheatMenu.esp") as FormList
 	int index = 0
 	while (index <  bradIngredientList .GetSize())
 		Ingredient temp01 = bradIngredientList.getAt(index) as Ingredient
@@ -254,7 +254,7 @@ endFunction
 
 ;Add coins to the player
 Function AddCoins(int nCoins, Actor actorToApply)
-	MiscObject coin = Game.GetForm(COINSADDRESS) as MiscObject
+	MiscObject coin = Game.GetFormFromFile(COINSADDRESS, "CheatMenu.esp") as MiscObject
 	actorToApply.Additem(coin, nCoins)
 EndFunction
 
