@@ -3,9 +3,11 @@ Scriptname CheatRoomCheatMenuMain extends Quest
 
 ;===ModName===;
 String modName = "Cheat Room.esp"
+String[] loadOrder ; Load Order of custom mods
 
 ;===FormIDs====;
 int CHEATMENUSPELLFORMID = 0x002442AC ; The cheat menu Spell FormID
+int CHEATMENUGETACTOR = 0x0024940A ; The cheat menu get actor spell
 int CHEATMENUHEXMENU01 = 0x002442AE ; The first hex menu
 int CHEATMENUHEXMENU02 = 0x002442AF ; The second  hex menu
 int CHEATMENUSTORINGVAR = 0x002493E0 ; If the user wants to store var
@@ -13,6 +15,7 @@ int CHEATMENUFORMTOUSEARG01 = 0x002493E1 ; The Form the user would like to use
 int CHEATMENUFORMTOUSEARG02 = 0x002493E2 ; The Form the user would like to use
 int CHEATMENUINTTOUSEARG = 0x002493E7 ; The int the user would like to use
 int CHEATMENUSELECTINTAMOUNT = 0x002493E8 ; The int the amount
+int CHEATMENUSELECTBOOLEAN = 0x002493FD ; The boolean
 
 ;===Arrays====
 int[] formIDArray ; Custom entered formID, array of digits and characters
@@ -26,6 +29,7 @@ int[] savedInts ; Saved ints
 
 ;===Spells===;
 Spell cheatMenuSpell
+Spell cheatMenuGetActorSpell
 
 ;===MessageBoxes===;
 Message hexMenu01
@@ -35,6 +39,7 @@ Message formToUseArg01; The Form the user would like to use
 Message formToUseArg02; The Form the user would like to use
 Message intToUseArg ; The int the user would like to use
 Message intAmount ;
+Message boolChose ;
 
 ;=======Events=======;
 
@@ -51,10 +56,13 @@ EndEvent
 ; First Time Setup, settings up varaibles, etc
 Function FirstTimeSetUp()
 	Game.GetPlayer().AddSpell(cheatMenuSpell, false) ; Adds the cheat menu spell
+	cheatMenuGetActorSpell = Game.GetFormFromFile(CHEATMENUGETACTOR, modName) as spell
+	Game.GetPlayer().AddSpell(cheatMenuGetActorSpell, false) ; Adds get actor spell
 	formIDArray = new Int[8] ; initialize array containing the id the user will enter
 	powerLocation = new Int[8] ; initialize array containing the powers for converting to hex
 	formIDs = new Int[4] ; initialize array containing custom ids
 	savedInts = new Int[4] ; initialize array containting customs ints
+	loadOrder = new String[128] ; Mod support limit
 	CreatePowerList() ; Create power list
 	; initialize ids
 	formIDs[0] = 0x00000014 ; Set as player
@@ -71,6 +79,7 @@ Function FirstTimeSetUp()
 	formToUseArg02 = Game.GetFormFromFile(CHEATMENUFORMTOUSEARG02, modName) as Message
 	intToUseArg = Game.GetFormFromFile(CHEATMENUINTTOUSEARG, modName) as Message
 	intAmount = Game.GetFormFromFile(CHEATMENUSELECTINTAMOUNT, modName) as Message
+	boolChose = Game.GetFormFromFile(CHEATMENUSELECTBOOLEAN, modName) as Message
 EndFunction
 
 ; Creates the power list, used to convert decimal to hex
@@ -85,13 +94,22 @@ Function CreatePowerList()
 	powerLocation[7] = 1 ; Slot  8
 EndFunction
 
+; Creates the base loadorder
+Function CreateBaseLoadOrder()
+	loadOrder[0] = "Skyrim.esm"
+	loadOrder[1] = "Update.esm"
+	loadOrder[2] = "Dawnguard.esm"
+	loadOrder[3] = "HearthFires.esm"
+	loadOrder[4] = "Dragonborn.esm"
+EndFunction
+
 ;Hex Menu 01
 int Function HexMenu01(int var)
 	int iButton01 = 0
 	while (true)
 		if iButton01 != -1
 			Debug.Notification(selectionHex)
-			iButton01 = hexMenu01.Show()
+			iButton01 = hexMenu01.Show(ConvertFromArrayToValue())
 			if iButton01 == 0 ; 0
 				formIDArray[currentIndex] = 0 * powerLocation[currentIndex]
 				selectionHex += "0"
@@ -147,7 +165,7 @@ Function HexMenu02()
 	while (true)
 		if iButton01 != -1
 			;Debug.Notification(selectionHex)
-			iButton01 = hexMenu02.Show()
+			iButton01 = hexMenu02.Show(ConvertFromArrayToValue())
 			if iButton01 == 0 ; 8
 				formIDArray[currentIndex] = 8 * powerLocation[currentIndex]
 				selectionHex += "8"
@@ -248,6 +266,16 @@ int Function FormToStoreIn(Int var)
 	formIDs[iButton01] = var
 EndFunction
 
+;Form To Use Menu First Arg
+bool  Function BoolChose()
+	int iButton01 = 0
+	iButton01 = boolChose.Show()
+	if iButton01 == 0
+		return true
+	endif
+	return false ; Default returns false
+EndFunction
+
 ;Int To Use Menu
 int Function IntToStoreIn(Int var)
 	int iButton01 = 0
@@ -258,7 +286,7 @@ int Function IntToStoreIn(Int var)
 	savedInts[iButton01] = var
 EndFunction
 
-; Convert from decimal to hex
+;Convert from decimal to hex
 int Function ConvertFromArrayToValue()
 	int _index = 0
 	int _value = 0
@@ -269,7 +297,7 @@ int Function ConvertFromArrayToValue()
 	return _value
 EndFunction
 
-; Resets the array
+;Resets the array
 Function ResetFormArray()
 	int _index = 0
 	while (_index < powerLocation.Length)
