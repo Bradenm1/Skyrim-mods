@@ -6,17 +6,7 @@ Scriptname TIF__052442BA Extends TopicInfo Hidden
 Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
-;===ModName===;
-String modName = "Cheat Room.esp"
-
-;===FormIDs====;
-;int CHEATMENUSECONDFORM = 0x002442BB	
-
 CheatRoomCheatMenuDialogue.Setform2ID(CheatRoomCheatMenuDialogue.HexMenu01(CheatRoomCheatMenuDialogue.Getform2ID()))
-
-;GlobalVariable secondForm = Game.GetFormFromFile(CHEATMENUSECONDFORM, modName) As GlobalVariable
-
-;CheatRoomCheatMenuDialogue.HexMenu01(secondForm)
 ;END CODE
 EndFunction
 ;END FRAGMENT

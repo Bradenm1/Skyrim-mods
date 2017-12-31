@@ -6,18 +6,12 @@ String modName = "Cheat Room.esp"
 
 ;===FormIDs====;
 int CHEATMENUSPELLFORMID = 0x002442AC ; The cheat menu Spell FormID
-int CHEATMENUFIRSTFORM = 0x002442B6
-int CHEATMENUSECONDFORM = 0x002442BB
 int CHEATMENUHEXMENU01 = 0x002442AE ; The first hex menu
 int CHEATMENUHEXMENU02 = 0x002442AF ; The second  hex menu
 
 ;===Arrays====
 int[] formIDArray ; Custom entered formID
 int[] powerLocation ; Powers using power of 16
-
-;===Globals===;
-;GlobalVariable firstFromHex
-;GlobalVariable secondFromHex
 
 ;===Local====
 string selectionHex ; Shows currently fake selection
@@ -57,11 +51,6 @@ Function FirstTimeSetUp()
 	;Set Menus
 	hexMenu01 = Game.GetFormFromFile(CHEATMENUHEXMENU01, modName) as Message
 	hexMenu02 = Game.GetFormFromFile(CHEATMENUHEXMENU02, modName) as Message
-	;Set Varaibles
-	;firstFromHex = Game.GetFormFromFile(CHEATMENUFIRSTFORM, modName) As GlobalVariable
-	;firstFromHex.SetValue(0x00000014) ; Set as player
-	;secondFromHex = Game.GetFormFromFile(CHEATMENUSECONDFORM, modName) As GlobalVariable
-	;secondFromHex.SetValue(0x00023AB1) ; Set as player
 EndFunction
 
 ; Creates the power list, used to convert decimal to hex
@@ -200,10 +189,6 @@ Function ResetFormArray()
 		_index += 1
 	endWhile
 EndFunction
-
-;nt Function ConvertStringToHex(String convert)
-;return (0x00000000 + convert as Int)
-;ndFunction
 
 ;=======Sets/Gets=======;
 
