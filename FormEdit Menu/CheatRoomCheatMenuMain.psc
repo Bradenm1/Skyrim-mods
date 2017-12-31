@@ -15,6 +15,7 @@ int CHEATMENUFORMTOUSEARG01 = 0x002493E1 ; The Form the user would like to use
 int CHEATMENUFORMTOUSEARG02 = 0x002493E2 ; The Form the user would like to use
 int CHEATMENUINTTOUSEARG = 0x002493E7 ; The int the user would like to use
 int CHEATMENUSELECTINTAMOUNT = 0x002493E8 ; The int the amount
+int CHEATMENUSELECTINTAMOUNTNEG = 0x00249410 ; The int the amount
 int CHEATMENUSELECTBOOLEAN = 0x002493FD ; The boolean
 
 ;===Arrays====
@@ -38,8 +39,9 @@ Message wantToStore ; If the user wants to store var
 Message formToUseArg01; The Form the user would like to use
 Message formToUseArg02; The Form the user would like to use
 Message intToUseArg ; The int the user would like to use
-Message intAmount ;
-Message boolChose ;
+Message intAmount ; Entering of custom int value
+Message intAmountNeg ; Entering of custom int neg value
+Message boolChose ; If the user wants false or true
 
 ;=======Events=======;
 
@@ -80,6 +82,7 @@ Function FirstTimeSetUp()
 	intToUseArg = Game.GetFormFromFile(CHEATMENUINTTOUSEARG, modName) as Message
 	intAmount = Game.GetFormFromFile(CHEATMENUSELECTINTAMOUNT, modName) as Message
 	boolChose = Game.GetFormFromFile(CHEATMENUSELECTBOOLEAN, modName) as Message
+	intAmountNeg = Game.GetFormFromFile(CHEATMENUSELECTINTAMOUNTNEG, modName) as Message
 EndFunction
 
 ; Creates the power list, used to convert decimal to hex
@@ -104,7 +107,7 @@ Function CreateBaseLoadOrder()
 EndFunction
 
 ;Hex Menu 01
-int Function HexMenu01(int var)
+int Function HexMenu01()
 	int iButton01 = 0
 	while (true)
 		if iButton01 != -1
@@ -204,6 +207,46 @@ Function HexMenu02()
 				currentIndex = 0
 			Elseif iButton01 ==9 ; Exit
 				return
+			endif
+		endif
+	endWhile
+EndFunction
+
+int Function SetIntValue()
+	int value = 0
+	int positive = 1
+	int iButton01 = 0
+	while (true)
+		if iButton01 != -1
+			if (positive == 1)
+				iButton01 = intAmount.Show(value)
+			else
+				iButton01 = intAmountNeg.Show(value)
+			endif
+			if iButton01 == 0 ; 0
+				value = 0
+			Elseif iButton01 == 1 ; 1
+				value += 1 * positive
+			Elseif iButton01 == 2 ; 2
+				value += 5 * positive
+			Elseif iButton01 == 3
+				value += 15 * positive
+			Elseif iButton01 == 4
+				value += 50 * positive
+			Elseif iButton01 == 5
+				value += 100 * positive
+			Elseif iButton01 == 6
+				value += 1000 * positive
+			Elseif iButton01 == 7
+				value += 10000 * positive
+			Elseif iButton01 == 8 ; Next Selection
+				if (positive == 0)
+					positive = 1
+				else
+					positive = -1
+				endif
+			Elseif iButton01 ==9 ; Exit
+				return value  ; Return the int value
 			endif
 		endif
 	endWhile
@@ -314,4 +357,12 @@ EndFunction
 
 Function SetFormIDs(int _index, int value)
 	formIDs[_index] = value
+EndFunction
+
+int Function GetSavedInt(int _index)
+	return savedInts[_index]
+EndFunction
+
+Function SetSavedInt(int _index, int value)
+	savedInts[_index] = value
 EndFunction
