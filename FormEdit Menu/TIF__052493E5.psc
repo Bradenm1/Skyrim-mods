@@ -1,15 +1,12 @@
 ;BEGIN FRAGMENT CODE - Do not edit anything between this and the end comment
 ;NEXT FRAGMENT INDEX 1
-Scriptname TIF__052493C0 Extends TopicInfo Hidden
+Scriptname TIF__052493E5 Extends TopicInfo Hidden
 
 ;BEGIN FRAGMENT Fragment_0
 Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
-Actor firstForm = Game.GetForm(CheatRoomCheatMenuDialogue.GetFormIDs(0)) as Actor
-Shout secondForm = Game.GetForm(CheatRoomCheatMenuDialogue.GetFormIDs(1)) As Shout
-
-firstForm.AddShout(secondForm)
+CheatRoomCheatMenuDialogue.SetFormIDs(0, CheatRoomCheatMenuDialogue.HexMenu01(CheatRoomCheatMenuDialogue.GetFormIDs(2)))
 ;END CODE
 EndFunction
 ;END FRAGMENT

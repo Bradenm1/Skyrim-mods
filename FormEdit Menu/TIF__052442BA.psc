@@ -6,7 +6,7 @@ Scriptname TIF__052442BA Extends TopicInfo Hidden
 Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
-CheatRoomCheatMenuDialogue.Setform2ID(CheatRoomCheatMenuDialogue.HexMenu01(CheatRoomCheatMenuDialogue.Getform2ID()))
+CheatRoomCheatMenuDialogue.SetFormIDs(1, CheatRoomCheatMenuDialogue.HexMenu01(CheatRoomCheatMenuDialogue.GetFormIDs(1)))
 ;END CODE
 EndFunction
 ;END FRAGMENT

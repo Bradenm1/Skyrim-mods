@@ -8,16 +8,18 @@ String modName = "Cheat Room.esp"
 int CHEATMENUSPELLFORMID = 0x002442AC ; The cheat menu Spell FormID
 int CHEATMENUHEXMENU01 = 0x002442AE ; The first hex menu
 int CHEATMENUHEXMENU02 = 0x002442AF ; The second  hex menu
+int CHEATMENUSTORINGVAR = 0x002493E0 ; If the user wants to store var
+int CHEATMENUFORMTOUSEARG01 = 0x002493E1 ; The Form the user would like to use
+int CHEATMENUFORMTOUSEARG02 = 0x002493E2 ; The Form the user would like to use
 
 ;===Arrays====
-int[] formIDArray ; Custom entered formID
+int[] formIDArray ; Custom entered formID, array of digits and characters
 int[] powerLocation ; Powers using power of 16
 
 ;===Local====
 string selectionHex ; Shows currently fake selection
 int currentIndex ; Shows current index in the array
-int form1ID
-int form2ID
+int[] formIDs ; Array of hex values in decimal
 
 ;===Spells===;
 Spell cheatMenuSpell
@@ -25,6 +27,9 @@ Spell cheatMenuSpell
 ;===MessageBoxes===;
 Message hexMenu01
 Message hexMenu02
+Message wantToStore ; If the user wants to store var
+Message formToUseArg01; The Form the user would like to use
+Message formToUseArg02; The Form the user would like to use
 
 ;=======Events=======;
 
@@ -41,16 +46,23 @@ EndEvent
 ; First Time Setup, settings up varaibles, etc
 Function FirstTimeSetUp()
 	Game.GetPlayer().AddSpell(cheatMenuSpell, false) ; Adds the cheat menu spell
-	formIDArray = new Int[8] ; initialize array containt the id the user will enter
-	powerLocation = new Int[8] ; initialize array containt the id the user will enter
+	formIDArray = new Int[8] ; initialize array containing the id the user will enter
+	powerLocation = new Int[8] ; initialize array containing the powers for converting to hex
+	formIDs = new Int[4] ; initialize array containing custom ids
 	CreatePowerList() ; Create power list
-	form1ID = 0x00000014 ; Set as player
-	form2ID = 0x00000007 ; Set as baseID of player
+	; initialize ids
+	formIDs[0] = 0x00000014 ; Set as player
+	formIDs[1] = 0x00000007 ; Set as baseID of player
+	formIDs[2] = 0x00000014 ; Set as player
+	formIDs[3] =  0x00000007 ; Set as baseID of player
 	selectionHex = ""
 	currentIndex= 0
 	;Set Menus
 	hexMenu01 = Game.GetFormFromFile(CHEATMENUHEXMENU01, modName) as Message
 	hexMenu02 = Game.GetFormFromFile(CHEATMENUHEXMENU02, modName) as Message
+	wantToStore = Game.GetFormFromFile(CHEATMENUSTORINGVAR, modName) as Message
+	formToUseArg01 = Game.GetFormFromFile(CHEATMENUFORMTOUSEARG01, modName) as Message
+	formToUseArg02 = Game.GetFormFromFile(CHEATMENUFORMTOUSEARG02, modName) as Message
 EndFunction
 
 ; Creates the power list, used to convert decimal to hex
@@ -107,7 +119,7 @@ int Function HexMenu01(int var)
 			Elseif iButton01 ==8 ; Next Selection
 				HexMenu02()
 			Elseif iButton01 ==9 ; Exit
-				if (currentIndex == 8)
+				if ((currentIndex == 8) && (Game.GetForm(ConvertFromArrayToValue())))
 					;var.SetValue(ConvertFromArrayToValue())
 					debug.messagebox(selectionHex)
 					selectionHex = ""
@@ -171,6 +183,31 @@ Function HexMenu02()
 	endWhile
 EndFunction
 
+;Form To Use Menu First Arg
+int Function FormToUseFirstArg(int _index)
+	int iButton01 = 0
+	while (true)
+		if iButton01 != -1
+			if (_index == 0)
+				iButton01 = formToUseArg01.Show()
+			Elseif (_index == 1)
+				iButton01 = formToUseArg02.Show()
+			EndIf
+			if iButton01 == 0
+				return formIDs[0]
+			Elseif iButton01 ==1
+				return formIDs[1]
+			Elseif iButton01 ==2
+				return formIDs[2]
+			Elseif iButton01 ==3
+				return formIDs[3]
+			Elseif iButton01 ==4 ; Exit
+				return 0
+			endif
+		endif
+	endWhile
+EndFunction
+
 int Function ConvertFromArrayToValue()
 	int _index = 0
 	int value = 0
@@ -192,18 +229,10 @@ EndFunction
 
 ;=======Sets/Gets=======;
 
-int Function Getform1ID()
-	return form1ID
+int Function GetFormIDs(int _index)
+	return formIDs[_index]
 EndFunction
 
-Function Setform1ID(int value)
-	form1ID = value
-EndFunction
-
-int Function Getform2ID()
-	return form2ID
-EndFunction
-
-Function Setform2ID(int value)
-	form2ID= value
+Function SetFormIDs(int _index, int value)
+	formIDs[_index] = value
 EndFunction
