@@ -6,8 +6,8 @@ Scriptname TIF__052493C0 Extends TopicInfo Hidden
 Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
-Actor firstForm = Game.GetForm(CheatRoomCheatMenuDialogue.GetFormIDs(0)) as Actor
-Shout secondForm = Game.GetForm(CheatRoomCheatMenuDialogue.GetFormIDs(1)) As Shout
+Actor firstForm = Game.GetForm(CheatRoomCheatMenuDialogue.FormToUseFirstArg(0)) As Actor
+Shout secondForm = Game.GetForm(CheatRoomCheatMenuDialogue.FormToUseFirstArg(1)) as Shout
 
 firstForm.AddShout(secondForm)
 ;END CODE

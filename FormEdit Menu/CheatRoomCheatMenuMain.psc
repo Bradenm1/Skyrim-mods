@@ -20,6 +20,7 @@ int[] powerLocation ; Powers using power of 16
 string selectionHex ; Shows currently fake selection
 int currentIndex ; Shows current index in the array
 int[] formIDs ; Array of hex values in decimal
+int[] savedInts ; Saved ints
 
 ;===Spells===;
 Spell cheatMenuSpell
@@ -49,6 +50,7 @@ Function FirstTimeSetUp()
 	formIDArray = new Int[8] ; initialize array containing the id the user will enter
 	powerLocation = new Int[8] ; initialize array containing the powers for converting to hex
 	formIDs = new Int[4] ; initialize array containing custom ids
+	savedInts = new Int[4] ; initialize array containting customs ints
 	CreatePowerList() ; Create power list
 	; initialize ids
 	formIDs[0] = 0x00000014 ; Set as player
@@ -210,35 +212,36 @@ EndFunction
 
 ;If the user wants to store the var, and what to store in
 Function StoreVar(int menu, Form var)
-	if menu== 0 ; Forms
-		FormToUseFirstArg(var.GetFormID())
-	Elseif menu==1 ; Ints
-	Elseif menu==2 ; Floats
-	Elseif menu==3 ; IDK
+	int iButton01 = 1
+	iButton01 = wantToStore.Show()
+	if iButton01 == 0
+		if menu== 0 ; Forms
+			FormToStoreIn(var.GetFormID())
+		Elseif menu==1 ; Ints
+		Elseif menu==2 ; Floats
+		Elseif menu==3 ; IDK
+		endif
 	endif
 EndFunction
 
 ;Form To Use Menu First Arg
 int Function FormToStoreIn(Int var)
 	int iButton01 = 0
-	while (true)
-		if iButton01 != -1
-			iButton01 = formToUseArg01.Show()
-			if iButton01 == 0
-				formIDs[0] = var
-			Elseif iButton01 ==1
-				formIDs[1] = var
-			Elseif iButton01 ==2
-				formIDs[2] = var
-			Elseif iButton01 ==3
-				formIDs[3] = var
-			Elseif iButton01 ==4 ; Exit
-				return 0
-			endif
-		endif
-	endWhile
+	iButton01 = formToUseArg01.Show()
+	if iButton01 == 0
+		formIDs[0] = var
+	Elseif iButton01 ==1
+		formIDs[1] = var
+	Elseif iButton01 ==2
+		formIDs[2] = var
+	Elseif iButton01 ==3
+		formIDs[3] = var
+	Elseif iButton01 ==4 ; Exit
+		return 0
+	endif
 EndFunction
 
+; Convert from decimal to hex
 int Function ConvertFromArrayToValue()
 	int _index = 0
 	int _value = 0
@@ -249,6 +252,7 @@ int Function ConvertFromArrayToValue()
 	return _value
 EndFunction
 
+; Resets the array
 Function ResetFormArray()
 	int _index = 0
 	while (_index < powerLocation.Length)

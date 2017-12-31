@@ -6,9 +6,15 @@ Scriptname TIF__052493D9 Extends TopicInfo Hidden
 Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
-Debug.MessageBox(Game.GetPlayerGrabbedRef())
+Form grabbed = Game.GetPlayerGrabbedRef()
+
+Debug.MessageBox(grabbed)
+
+CheatRoomCheatMenuDialogue.StoreVar(0, grabbed)
 ;END CODE
 EndFunction
 ;END FRAGMENT
 
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
+
+CheatRoomCheatMenuMain Property CheatRoomCheatMenuDialogue Auto
