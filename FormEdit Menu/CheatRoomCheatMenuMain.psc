@@ -208,19 +208,49 @@ int Function FormToUseFirstArg(int _index)
 	endWhile
 EndFunction
 
+;If the user wants to store the var, and what to store in
+Function StoreVar(int menu, Form var)
+	if menu== 0 ; Forms
+		FormToUseFirstArg(var.GetFormID())
+	Elseif menu==1 ; Ints
+	Elseif menu==2 ; Floats
+	Elseif menu==3 ; IDK
+	endif
+EndFunction
+
+;Form To Use Menu First Arg
+int Function FormToStoreIn(Int var)
+	int iButton01 = 0
+	while (true)
+		if iButton01 != -1
+			iButton01 = formToUseArg01.Show()
+			if iButton01 == 0
+				formIDs[0] = var
+			Elseif iButton01 ==1
+				formIDs[1] = var
+			Elseif iButton01 ==2
+				formIDs[2] = var
+			Elseif iButton01 ==3
+				formIDs[3] = var
+			Elseif iButton01 ==4 ; Exit
+				return 0
+			endif
+		endif
+	endWhile
+EndFunction
+
 int Function ConvertFromArrayToValue()
 	int _index = 0
-	int value = 0
+	int _value = 0
 	while (_index < powerLocation.Length)
-		value += formIDArray[_index]
+		_value+= formIDArray[_index]
 		_index += 1
 	endWhile
-	return value
+	return _value
 EndFunction
 
 Function ResetFormArray()
 	int _index = 0
-	int value = 0
 	while (_index < powerLocation.Length)
 		formIDArray[_index] = 0
 		_index += 1
