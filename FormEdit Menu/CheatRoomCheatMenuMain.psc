@@ -44,8 +44,8 @@ Function FirstTimeSetUp()
 	formIDArray = new Int[8] ; initialize array containt the id the user will enter
 	powerLocation = new Int[8] ; initialize array containt the id the user will enter
 	CreatePowerList() ; Create power list
-	form1ID = 0x00000014
-	form2ID = 0x00000007
+	form1ID = 0x00000014 ; Set as player
+	form2ID = 0x00000007 ; Set as baseID of player
 	selectionHex = ""
 	currentIndex= 0
 	;Set Menus
