@@ -12,7 +12,7 @@ Form base = firstForm.GetBaseObject() as Form
 
 debug.messagebox(base)
 
-CheatRoomCheatMenuDialogue.StoreVar(0, base)
+CheatRoomCheatMenuDialogue.StoreVar(0, base.GetFormID())
 ;END CODE
 EndFunction
 ;END FRAGMENT

@@ -11,6 +11,8 @@ int CHEATMENUHEXMENU02 = 0x002442AF ; The second  hex menu
 int CHEATMENUSTORINGVAR = 0x002493E0 ; If the user wants to store var
 int CHEATMENUFORMTOUSEARG01 = 0x002493E1 ; The Form the user would like to use
 int CHEATMENUFORMTOUSEARG02 = 0x002493E2 ; The Form the user would like to use
+int CHEATMENUINTTOUSEARG = 0x002493E7 ; The int the user would like to use
+int CHEATMENUSELECTINTAMOUNT = 0x002493E8 ; The int the amount
 
 ;===Arrays====
 int[] formIDArray ; Custom entered formID, array of digits and characters
@@ -31,6 +33,8 @@ Message hexMenu02
 Message wantToStore ; If the user wants to store var
 Message formToUseArg01; The Form the user would like to use
 Message formToUseArg02; The Form the user would like to use
+Message intToUseArg ; The int the user would like to use
+Message intAmount ;
 
 ;=======Events=======;
 
@@ -65,6 +69,8 @@ Function FirstTimeSetUp()
 	wantToStore = Game.GetFormFromFile(CHEATMENUSTORINGVAR, modName) as Message
 	formToUseArg01 = Game.GetFormFromFile(CHEATMENUFORMTOUSEARG01, modName) as Message
 	formToUseArg02 = Game.GetFormFromFile(CHEATMENUFORMTOUSEARG02, modName) as Message
+	intToUseArg = Game.GetFormFromFile(CHEATMENUINTTOUSEARG, modName) as Message
+	intAmount = Game.GetFormFromFile(CHEATMENUSELECTINTAMOUNT, modName) as Message
 EndFunction
 
 ; Creates the power list, used to convert decimal to hex
@@ -190,34 +196,42 @@ int Function FormToUseFirstArg(int _index)
 	int iButton01 = 0
 	while (true)
 		if iButton01 != -1
-			if (_index == 0)
+			if (_index == 0) ; What argument the user is on
 				iButton01 = formToUseArg01.Show()
 			Elseif (_index == 1)
 				iButton01 = formToUseArg02.Show()
 			EndIf
-			if iButton01 == 0
-				return formIDs[0]
-			Elseif iButton01 ==1
-				return formIDs[1]
-			Elseif iButton01 ==2
-				return formIDs[2]
-			Elseif iButton01 ==3
-				return formIDs[3]
-			Elseif iButton01 ==4 ; Exit
+			if (iButton01 ==formIDs.length) ; Exit
 				return 0
 			endif
+			return formIDs[iButton01]
+		endif
+	endWhile
+EndFunction
+
+;Int To Use Menu
+int Function IntToUse()
+	int iButton01 = 0
+	while (true)
+		if iButton01 != -1
+			iButton01 = intToUseArg.Show()
+			If iButton01 == savedInts.length ; Exit
+				return 0
+			endif
+			return savedInts[iButton01]
 		endif
 	endWhile
 EndFunction
 
 ;If the user wants to store the var, and what to store in
-Function StoreVar(int menu, Form var)
+Function StoreVar(int menu, int var)
 	int iButton01 = 1
 	iButton01 = wantToStore.Show()
 	if iButton01 == 0
 		if menu== 0 ; Forms
-			FormToStoreIn(var.GetFormID())
+			FormToStoreIn(var)
 		Elseif menu==1 ; Ints
+			IntToStoreIn(var)
 		Elseif menu==2 ; Floats
 		Elseif menu==3 ; IDK
 		endif
@@ -228,17 +242,20 @@ EndFunction
 int Function FormToStoreIn(Int var)
 	int iButton01 = 0
 	iButton01 = formToUseArg01.Show()
-	if iButton01 == 0
-		formIDs[0] = var
-	Elseif iButton01 ==1
-		formIDs[1] = var
-	Elseif iButton01 ==2
-		formIDs[2] = var
-	Elseif iButton01 ==3
-		formIDs[3] = var
-	Elseif iButton01 ==4 ; Exit
+	if iButton01 ==formIDs.length ; Exit
 		return 0
 	endif
+	formIDs[iButton01] = var
+EndFunction
+
+;Int To Use Menu
+int Function IntToStoreIn(Int var)
+	int iButton01 = 0
+	iButton01 = formToUseArg01.Show()
+	if iButton01 ==formIDs.length ; Exit
+		return 0
+	endif
+	savedInts[iButton01] = var
 EndFunction
 
 ; Convert from decimal to hex
