@@ -212,6 +212,7 @@ Function HexMenu02()
 	endWhile
 EndFunction
 
+; Set int menu
 int Function SetIntValue()
 	int value = 0
 	int positive = 1
@@ -240,7 +241,7 @@ int Function SetIntValue()
 			Elseif iButton01 == 7
 				value += 10000 * positive
 			Elseif iButton01 == 8 ; Next Selection
-				if (positive == 0)
+				if (positive == -1)
 					positive = 1
 				else
 					positive = -1
@@ -252,7 +253,7 @@ int Function SetIntValue()
 	endWhile
 EndFunction
 
-;Form To Use Menu First Arg
+;Form To Use Menu
 int Function FormToUseFirstArg(int _index)
 	int iButton01 = 0
 	while (true)
@@ -275,9 +276,15 @@ int Function IntToUse()
 	int iButton01 = 0
 	while (true)
 		if iButton01 != -1
-			iButton01 = intToUseArg.Show()
-			If iButton01 == savedInts.length ; Exit
-				return 0
+			iButton01 = intToUseArg.Show(savedInts[0], savedInts[1], savedInts[2], savedInts[3]) ; Shows int values in message
+			If iButton01 == savedInts.length ; Custom Int
+				int value = SetIntValue()
+				;if (value <= 0)
+				;	value = 1
+				;endif
+				return value
+			elseif (iButton01 == (savedInts.length + 1)) ; Exit
+				return 0 ; Default returns 0
 			endif
 			return savedInts[iButton01]
 		endif

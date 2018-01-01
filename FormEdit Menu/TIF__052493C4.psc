@@ -8,7 +8,7 @@ Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
 ObjectReference firstForm = Game.GetForm(CheatRoomCheatMenuDialogue.FormToUseFirstArg(0)) As ObjectReference
 
-Form base = firstForm.GetBaseObject() as Form
+Form base = firstForm.GetBaseObject()
 
 debug.messagebox(base)
 
