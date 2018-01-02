@@ -364,13 +364,28 @@ Function StoreVar(int menu, int var)
 			FormToStoreIn(var)
 		Elseif menu==1 ; Ints
 			IntToStoreIn(var)
-		Elseif menu==2 ; Floats
-		Elseif menu==3 ; IDK
 		endif
 	endif
 EndFunction
 
-;Form To Use Menu First Arg
+; Store a string
+Function StoreString()
+	int iButton01 = 1
+	iButton01 = wantToStore.Show()
+	if iButton01 == 0
+	endif
+EndFunction
+
+; Store a float
+Function StoreFloat(float var)
+	int iButton01 = 1
+	iButton01 = wantToStore.Show()
+		FloatToStoreIn(var)
+	if iButton01 == 0
+	endif
+EndFunction
+
+; Form To Use Menu First Arg
 int Function FormToStoreIn(Int var)
 	int iButton01 = 0
 	iButton01 = formToUseArg01.Show()
@@ -393,11 +408,21 @@ EndFunction
 ;Int To Use Menu
 int Function IntToStoreIn(Int var)
 	int iButton01 = 0
-	iButton01 = formToUseArg01.Show()
-	if iButton01 ==formIDs.length ; Exit
+	iButton01 = intToUseArg.Show()
+	if iButton01 == savedInts.length ; Exit
 		return 0
 	endif
 	savedInts[iButton01] = var
+EndFunction
+
+;Float To Use Menu
+Float Function FloatToStoreIn(Float var)
+	int iButton01 = 0
+	iButton01 = floatToUseArg.Show()
+	if iButton01 == savedFloats.length ; Exit
+		return 0.00
+	endif
+	savedFloats[iButton01] = var
 EndFunction
 
 ;Convert from decimal to hex

@@ -1,19 +1,17 @@
 ;BEGIN FRAGMENT CODE - Do not edit anything between this and the end comment
 ;NEXT FRAGMENT INDEX 1
-Scriptname TIF__05249454 Extends TopicInfo Hidden
+Scriptname TIF__05249471 Extends TopicInfo Hidden
 
 ;BEGIN FRAGMENT Fragment_0
 Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
-int min = CheatRoomCheatMenuDialogue.IntToUse()
-int max = CheatRoomCheatMenuDialogue.IntToUse()
+VisualEffect firstForm = Game.GetForm(CheatRoomCheatMenuDialogue.FormToUseFirstArg(0)) As VisualEffect
+ObjectReference secondForm = Game.GetForm(CheatRoomCheatMenuDialogue.FormToUseFirstArg(1)) as ObjectReference
 
-int rGen = Utility.RandomInt(min, max)
+float number = CheatRoomCheatMenuDialogue.FloatToUse()
 
-debug.messagebox("Number Generated: " + rGen)
-
-CheatRoomCheatMenuDialogue.StoreVar(2, rGen)
+firstForm.Play(secondForm, number)
 ;END CODE
 EndFunction
 ;END FRAGMENT
