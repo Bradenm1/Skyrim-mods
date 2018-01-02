@@ -15,7 +15,10 @@ int CHEATMENUFORMTOUSEARG01 = 0x002493E1 ; The Form the user would like to use
 int CHEATMENUFORMTOUSEARG02 = 0x002493E2 ; The Form the user would like to use
 int CHEATMENUINTTOUSEARG = 0x002493E7 ; The int the user would like to use
 int CHEATMENUSELECTINTAMOUNT = 0x002493E8 ; The int the amount
-int CHEATMENUSELECTINTAMOUNTNEG = 0x00249410 ; The int the amount
+int CHEATMENUSELECTINTAMOUNTNEG = 0x00249410 ; The int the amount neg
+int CHEATMENUFLOATTOUSEARG = 0x00249466 ; The float the user would like to use
+int CHEATMENUSELECTFLOATAMOUNT = 0x00249464 ; The float the amount
+int CHEATMENUSELECTFLOATAMOUNTNEG = 0x00249465 ; The float the amount neg
 int CHEATMENUSELECTBOOLEAN = 0x002493FD ; The boolean
 
 ;===Arrays====
@@ -27,6 +30,7 @@ string selectionHex ; Shows currently fake selection
 int currentIndex ; Shows current index in the array
 int[] formIDs ; Array of hex values in decimal
 int[] savedInts ; Saved ints
+float[] savedFloats ; Saved floats
 
 ;===Spells===;
 Spell cheatMenuSpell
@@ -41,6 +45,9 @@ Message formToUseArg02; The Form the user would like to use
 Message intToUseArg ; The int the user would like to use
 Message intAmount ; Entering of custom int value
 Message intAmountNeg ; Entering of custom int neg value
+Message floatToUseArg ; The int the user would like to use
+Message floatAmount ; Entering of custom float value
+Message floatAmountNeg ; Entering of custom float neg value
 Message boolChose ; If the user wants false or true
 
 ;=======Events=======;
@@ -64,6 +71,7 @@ Function FirstTimeSetUp()
 	powerLocation = new Int[8] ; initialize array containing the powers for converting to hex
 	formIDs = new Int[4] ; initialize array containing custom ids
 	savedInts = new Int[4] ; initialize array containting customs ints
+	savedFloats = new Float[4] ; initialize array containting customs floats
 	loadOrder = new String[128] ; Mod support limit
 	CreatePowerList() ; Create power list
 	; initialize ids
@@ -81,8 +89,11 @@ Function FirstTimeSetUp()
 	formToUseArg02 = Game.GetFormFromFile(CHEATMENUFORMTOUSEARG02, modName) as Message
 	intToUseArg = Game.GetFormFromFile(CHEATMENUINTTOUSEARG, modName) as Message
 	intAmount = Game.GetFormFromFile(CHEATMENUSELECTINTAMOUNT, modName) as Message
-	boolChose = Game.GetFormFromFile(CHEATMENUSELECTBOOLEAN, modName) as Message
 	intAmountNeg = Game.GetFormFromFile(CHEATMENUSELECTINTAMOUNTNEG, modName) as Message
+	floatToUseArg = Game.GetFormFromFile(CHEATMENUFLOATTOUSEARG, modName) as Message
+	floatAmount = Game.GetFormFromFile(CHEATMENUSELECTFLOATAMOUNT, modName) as Message
+	floatAmountNeg = Game.GetFormFromFile(CHEATMENUSELECTFLOATAMOUNTNEG, modName) as Message
+	boolChose = Game.GetFormFromFile(CHEATMENUSELECTBOOLEAN, modName) as Message 
 EndFunction
 
 ; Creates the power list, used to convert decimal to hex
@@ -224,11 +235,11 @@ int Function SetIntValue()
 			else
 				iButton01 = intAmountNeg.Show(value)
 			endif
-			if iButton01 == 0 ; 0
+			if iButton01 == 0 
 				value = 0
-			Elseif iButton01 == 1 ; 1
+			Elseif iButton01 == 1
 				value += 1 * positive
-			Elseif iButton01 == 2 ; 2
+			Elseif iButton01 == 2
 				value += 5 * positive
 			Elseif iButton01 == 3
 				value += 15 * positive
@@ -253,11 +264,48 @@ int Function SetIntValue()
 	endWhile
 EndFunction
 
+; Set float  menu
+float Function SetFloatValue()
+	float value = 0.00
+	int positive = 1
+	int iButton01 = 0
+	while (true)
+		if iButton01 != -1
+			if (positive == 1)
+				iButton01 = floatAmount.Show(value)
+			else
+				iButton01 = floatAmountNeg.Show(value)
+			endif
+			if iButton01 == 0
+				value = 0.00
+			Elseif iButton01 == 1
+				value += 0.01 * positive
+			Elseif iButton01 == 2
+				value += 0.05 * positive
+			Elseif iButton01 == 3
+				value += 0.1 * positive
+			Elseif iButton01 == 4
+				value += 0.5 * positive
+			Elseif iButton01 == 5
+				value += SetIntValue()
+			Elseif iButton01 == 6 ; Next Selection
+				if (positive == -1)
+					positive = 1
+				else
+					positive = -1
+				endif
+			Elseif iButton01 ==7 ; Exit
+				return value  ; Return the float value
+			endif
+		endif
+	endWhile
+EndFunction
+
 ;Form To Use Menu
 int Function FormToUseFirstArg(int _index)
 	int iButton01 = 0
 	while (true)
-		if iButton01 != -1
+		if (iButton01 != -1)
 			if (_index == 0) ; What argument the user is on
 				iButton01 = formToUseArg01.Show()
 			Elseif (_index == 1)
@@ -287,6 +335,22 @@ int Function IntToUse()
 				return 0 ; Default returns 0
 			endif
 			return savedInts[iButton01]
+		endif
+	endWhile
+EndFunction
+
+;Float To Use Menu
+float Function FloatToUse()
+	int iButton01 = 0
+	while (true)
+		if iButton01 != -1
+			iButton01 = intToUseArg.Show(savedFloats[0], savedFloats[1], savedFloats[2], savedFloats[3]) ; Shows float values in message
+			If iButton01 == savedFloats.length ; Custom Float
+				return SetFloatValue()
+			elseif (iButton01 == (savedFloats.length + 1)) ; Exit
+				return 0 ; Default returns 0
+			endif
+			return savedFloats[iButton01]
 		endif
 	endWhile
 EndFunction
@@ -372,4 +436,12 @@ EndFunction
 
 Function SetSavedInt(int _index, int value)
 	savedInts[_index] = value
+EndFunction
+
+float Function GetSavedFloat(int _index)
+	return savedFloats[_index]
+EndFunction
+
+Function SetSavedFloat(int _index, float value)
+	savedFloats[_index] = value
 EndFunction
