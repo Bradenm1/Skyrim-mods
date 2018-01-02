@@ -24,13 +24,14 @@ int CHEATMENUSELECTBOOLEAN = 0x002493FD ; The boolean
 ;===Arrays====
 int[] formIDArray ; Custom entered formID, array of digits and characters
 int[] powerLocation ; Powers using power of 16
+String[] hexDigits ; Contains hex
+int[] formIDs ; Array of hex values in decimal
+int[] savedInts ; Saved ints
+float[] savedFloats ; Saved floats
 
 ;===Local====
 string selectionHex ; Shows currently fake selection
 int currentIndex ; Shows current index in the array
-int[] formIDs ; Array of hex values in decimal
-int[] savedInts ; Saved ints
-float[] savedFloats ; Saved floats
 
 ;===Spells===;
 Spell cheatMenuSpell
@@ -64,15 +65,11 @@ EndEvent
 
 ; First Time Setup, settings up varaibles, etc
 Function FirstTimeSetUp()
+	; Give spells
 	Game.GetPlayer().AddSpell(cheatMenuSpell, false) ; Adds the cheat menu spell
 	cheatMenuGetActorSpell = Game.GetFormFromFile(CHEATMENUGETACTOR, modName) as spell
 	Game.GetPlayer().AddSpell(cheatMenuGetActorSpell, false) ; Adds get actor spell
-	formIDArray = new Int[8] ; initialize array containing the id the user will enter
-	powerLocation = new Int[8] ; initialize array containing the powers for converting to hex
-	formIDs = new Int[4] ; initialize array containing custom ids
-	savedInts = new Int[4] ; initialize array containting customs ints
-	savedFloats = new Float[4] ; initialize array containting customs floats
-	loadOrder = new String[128] ; Mod support limit
+	InitalizeArrays() ; Initalizes all the arrays
 	CreatePowerList() ; Create power list
 	; initialize ids
 	formIDs[0] = 0x00000014 ; Set as player
@@ -81,7 +78,22 @@ Function FirstTimeSetUp()
 	formIDs[3] =  0x00000007 ; Set as baseID of player
 	selectionHex = ""
 	currentIndex= 0
-	;Set Menus
+	CreateMessages() ; Creates the messages the menu will use
+EndFunction
+
+; Initalizes all the arrays
+Function InitalizeArrays()
+	formIDArray = new Int[8] ; initialize array containing the id the user will enter
+	powerLocation = new Int[8] ; initialize array containing the powers for converting to hex
+	formIDs = new Int[4] ; initialize array containing custom ids
+	savedInts = new Int[4] ; initialize array containting customs ints
+	savedFloats = new Float[4] ; initialize array containting customs floats
+	loadOrder = new String[128] ; Mod support limit
+	hexDigits = new String[17] ; Number of hex
+EndFunction
+
+; Creates the messages the menu will use
+Function CreateMessages()
 	hexMenu01 = Game.GetFormFromFile(CHEATMENUHEXMENU01, modName) as Message
 	hexMenu02 = Game.GetFormFromFile(CHEATMENUHEXMENU02, modName) as Message
 	wantToStore = Game.GetFormFromFile(CHEATMENUSTORINGVAR, modName) as Message
@@ -98,6 +110,8 @@ EndFunction
 
 ; Creates the power list, used to convert decimal to hex
 Function CreatePowerList()
+	; To get these numbers do 16 to the power of "number"
+	; Example 16 ^ 2 = 256
 	powerLocation[0] = 268435456 ; Slot 1
 	powerLocation[1] = 16777216 ; Slot  2
 	powerLocation[2] = 1048576 ; Slot  3
@@ -115,6 +129,8 @@ Function CreateBaseLoadOrder()
 	loadOrder[2] = "Dawnguard.esm"
 	loadOrder[3] = "HearthFires.esm"
 	loadOrder[4] = "Dragonborn.esm"
+	loadOrder[5] = "Cheat Room.esp"
+	loadOrder[6] = "Example Name.esp/esm"
 EndFunction
 
 ;Hex Menu 01
@@ -122,50 +138,18 @@ int Function HexMenu01()
 	int iButton01 = 0
 	while (true)
 		if iButton01 != -1
-			Debug.Notification(selectionHex)
 			iButton01 = hexMenu01.Show(ConvertFromArrayToValue())
-			if iButton01 == 0 ; 0
-				formIDArray[currentIndex] = 0 * powerLocation[currentIndex]
-				selectionHex += "0"
-				currentIndex+= 1
-			Elseif iButton01 ==1 ; 1
-				formIDArray[currentIndex] = 1 * powerLocation[currentIndex]
-				selectionHex += "1"
-				currentIndex+= 1
-			Elseif iButton01 ==2 ; 2
-				formIDArray[currentIndex] = 2 * powerLocation[currentIndex]
-				selectionHex += "2"
-				currentIndex+= 1
-			Elseif iButton01 ==3 ; 3
-				formIDArray[currentIndex] = 3 * powerLocation[currentIndex]
-				selectionHex += "3"
-				currentIndex+= 1
-			Elseif iButton01 ==4 ; 4
-				formIDArray[currentIndex] = 4 * powerLocation[currentIndex]
-				selectionHex += "4"
-				currentIndex+= 1
-			Elseif iButton01 ==5 ; 5
-				formIDArray[currentIndex] = 5 * powerLocation[currentIndex]
-				selectionHex += "5"
-				currentIndex+= 1
-			Elseif iButton01 ==6 ; 6
-				formIDArray[currentIndex] = 6 * powerLocation[currentIndex]
-				selectionHex += "6"
-				currentIndex+= 1
-			Elseif iButton01 ==7 ; 7
-				formIDArray[currentIndex] = 7 * powerLocation[currentIndex]
-				selectionHex += "7"
+			if ((iButton01 >= 0) && (iButton01  < 8))
+				formIDArray[currentIndex] = iButton01 * powerLocation[currentIndex]
 				currentIndex+= 1
 			Elseif iButton01 ==8 ; Next Selection
 				HexMenu02()
 			Elseif iButton01 ==9 ; Exit
 				if ((currentIndex == 8) && (Game.GetForm(ConvertFromArrayToValue())))
-					;var.SetValue(ConvertFromArrayToValue())
-					debug.messagebox(selectionHex)
-					selectionHex = ""
 					currentIndex= 0
 				else
-					debug.messagebox("Incorrect ID, you entered: " + selectionHex)
+					currentIndex= 0
+					debug.messagebox("Incorrect ID")
 				endIf
 				return ConvertFromArrayToValue() ; Return the decimal value
 			endif
@@ -176,45 +160,15 @@ EndFunction
 ;Hex Menu 02
 Function HexMenu02()
 	int iButton01 = 0
+	int offset = 8
 	while (true)
 		if iButton01 != -1
-			;Debug.Notification(selectionHex)
 			iButton01 = hexMenu02.Show(ConvertFromArrayToValue())
-			if iButton01 == 0 ; 8
-				formIDArray[currentIndex] = 8 * powerLocation[currentIndex]
-				selectionHex += "8"
-				currentIndex+= 1
-			Elseif iButton01 ==1 ; 9
-				formIDArray[currentIndex] = 9 * powerLocation[currentIndex]
-				selectionHex += "9"
-				currentIndex+= 1
-			Elseif iButton01 ==2 ; A
-				formIDArray[currentIndex] = 10 * powerLocation[currentIndex]
-				selectionHex += "A"
-				currentIndex+= 1
-			Elseif iButton01 ==3 ; B
-				formIDArray[currentIndex] = 11 * powerLocation[currentIndex]
-				selectionHex += "B"
-				currentIndex+= 1
-			Elseif iButton01 ==4 ; C
-				formIDArray[currentIndex] = 12 * powerLocation[currentIndex]
-				selectionHex += "C"
-				currentIndex+= 1
-			Elseif iButton01 ==5 ; D
-				formIDArray[currentIndex] = 13 * powerLocation[currentIndex]
-				selectionHex += "D"
-				currentIndex+= 1
-			Elseif iButton01 ==6 ; E
-				formIDArray[currentIndex] = 14 * powerLocation[currentIndex]
-				selectionHex += "E"
-				currentIndex+= 1
-			Elseif iButton01 ==7 ; F
-				formIDArray[currentIndex] = 15 * powerLocation[currentIndex]
-				selectionHex += "F"
+			if ((iButton01 >= 0) && (iButton01  < 8))
+				formIDArray[currentIndex] = (iButton01 + offset) * powerLocation[currentIndex]
 				currentIndex+= 1
 			Elseif iButton01 ==8 ; Reset
 				ResetFormArray()
-				selectionHex = ""
 				currentIndex = 0
 			Elseif iButton01 ==9 ; Exit
 				return
@@ -311,7 +265,9 @@ int Function FormToUseFirstArg(int _index)
 			Elseif (_index == 1)
 				iButton01 = formToUseArg02.Show()
 			EndIf
-			if (iButton01 ==formIDs.length) ; Exit
+			if (iButton01 == formIDs.length) ; Custom Form
+				return HexMenu01()
+			elseif (iButton01 == (formIDs.length + 1)) ; Exit
 				return 0
 			endif
 			return formIDs[iButton01]
