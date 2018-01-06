@@ -8,7 +8,7 @@ Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
 ObjectReference firstForm = Game.GetForm(CheatRoomCheatMenuDialogue.FormToUseFirstArg(0)) As ObjectReference
 
-int amount = CheatRoomCheatMenuDialogue.IntToUse()
+Float amount = CheatRoomCheatMenuDialogue.FloatToUse()
 
 firstForm.SetScale(amount)
 ;END CODE
