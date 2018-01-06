@@ -3,7 +3,6 @@ Scriptname CheatRoomCheatMenuMain extends Quest
 
 ;===ModName===;
 String modName = "Cheat Room.esp"
-String[] loadOrder ; Load Order of custom mods
 
 ;===FormIDs====;
 int CHEATMENUSPELLFORMID = 0x002442AC ; The cheat menu Spell FormID
@@ -22,9 +21,11 @@ int CHEATMENUSELECTFLOATAMOUNTNEG = 0x00249465 ; The float the amount neg
 int CHEATMENUSELECTBOOLEAN = 0x002493FD ; The boolean
 
 ;===Arrays====
+String[] loadOrder ; Load Order of custom mods
 int[] formIDArray ; Custom entered formID, array of digits and characters
 int[] powerLocation ; Powers using power of 16
 String[] hexDigits ; Contains hex
+String[] digitsAndCharacters ; Contains alphabet characters
 int[] formIDs ; Array of hex values in decimal
 int[] savedInts ; Saved ints
 float[] savedFloats ; Saved floats
@@ -32,6 +33,7 @@ float[] savedFloats ; Saved floats
 ;===Local====
 string selectionHex ; Shows currently fake selection
 int currentIndex ; Shows current index in the array
+int currentSelectedMod ; Current select mod given the array
 
 ;===Spells===;
 Spell cheatMenuSpell
@@ -71,13 +73,15 @@ Function FirstTimeSetUp()
 	Game.GetPlayer().AddSpell(cheatMenuGetActorSpell, false) ; Adds get actor spell
 	InitalizeArrays() ; Initalizes all the arrays
 	CreatePowerList() ; Create power list
+	CreateBaseLoadOrder() ; Create base loadorder
 	; initialize ids
 	formIDs[0] = 0x00000014 ; Set as player
 	formIDs[1] = 0x00000007 ; Set as baseID of player
-	formIDs[2] = 0x00000014 ; Set as player
-	formIDs[3] =  0x00000007 ; Set as baseID of player
+	formIDs[2] = 0x000139B9 ; Set as baseID of a sword
+	formIDs[3] =  0x00013BAC ; Set as refID of Heimskr
 	selectionHex = ""
 	currentIndex= 0
+	currentSelectedMod = 5
 	CreateMessages() ; Creates the messages the menu will use
 EndFunction
 
@@ -122,6 +126,53 @@ Function CreatePowerList()
 	powerLocation[7] = 1 ; Slot  8
 EndFunction
 
+Function CreateWordArray()
+    digitsAndCharacters[0] = "A"
+    digitsAndCharacters[1] = "B"
+    digitsAndCharacters[2] = "C"
+    digitsAndCharacters[3] = "D"
+    digitsAndCharacters[4] = "E"
+    digitsAndCharacters[5] = "F"
+    digitsAndCharacters[6] = "G"
+    digitsAndCharacters[7] = "H"
+    digitsAndCharacters[8] = "I"
+    digitsAndCharacters[9] = "J"
+    digitsAndCharacters[10] = "K"
+    digitsAndCharacters[11] = "L"
+    digitsAndCharacters[12] = "M"
+    digitsAndCharacters[13] = "N"
+    digitsAndCharacters[14] = "O"
+    digitsAndCharacters[15] = "P"
+    digitsAndCharacters[16] = "Q"
+    digitsAndCharacters[17] = "R"
+    digitsAndCharacters[18] = "S"
+    digitsAndCharacters[19] = "T"
+    digitsAndCharacters[20] = "U"
+    digitsAndCharacters[21] = "V"
+    digitsAndCharacters[22] = "W"
+    digitsAndCharacters[23] = "X"
+    digitsAndCharacters[24] = "Y"
+    digitsAndCharacters[25] = "Z"
+    digitsAndCharacters[26] = "_"
+    digitsAndCharacters[27] = "0"
+    digitsAndCharacters[28] = "1"
+    digitsAndCharacters[29] = "2"
+    digitsAndCharacters[30] = "3"
+    digitsAndCharacters[31] = "4"
+    digitsAndCharacters[32] = "5"
+    digitsAndCharacters[33] = "6"
+    digitsAndCharacters[34] = "7"
+    digitsAndCharacters[35] = "8"
+    digitsAndCharacters[36] = "9"
+    digitsAndCharacters[37] = "-"
+    digitsAndCharacters[38] = "."
+    digitsAndCharacters[39] = " "
+    digitsAndCharacters[40] = "'"
+    digitsAndCharacters[41] = "~"
+    digitsAndCharacters[42] = ","
+    digitsAndCharacters[43] = "@"
+EndFunction
+
 ; Creates the base loadorder
 Function CreateBaseLoadOrder()
 	loadOrder[0] = "Skyrim.esm"
@@ -145,13 +196,13 @@ int Function HexMenu01()
 			Elseif iButton01 ==8 ; Next Selection
 				HexMenu02()
 			Elseif iButton01 ==9 ; Exit
-				if ((currentIndex == 8) && (Game.GetForm(ConvertFromArrayToValue())))
+				if ((currentIndex == 8) && (Game.GetFormFromFile(ConvertFromArrayToValue(), GetModAtLoadOrder())))
 					currentIndex= 0
+					return ConvertFromArrayToValue() ; Return the decimal value
 				else
 					currentIndex= 0
-					debug.messagebox("Incorrect ID")
+					debug.messagebox("Incorrect ID. Either this ID does not exist for " + GetModAtLoadOrder() + ", or the ID is not a length of 8 digits/characters")
 				endIf
-				return ConvertFromArrayToValue() ; Return the decimal value
 			endif
 		endif
 	endWhile
@@ -206,11 +257,7 @@ int Function SetIntValue()
 			Elseif iButton01 == 7
 				value += 10000 * positive
 			Elseif iButton01 == 8 ; Next Selection
-				if (positive == -1)
-					positive = 1
-				else
-					positive = -1
-				endif
+				positive = positive * -1
 			Elseif iButton01 ==9 ; Exit
 				return value  ; Return the int value
 			endif
@@ -243,11 +290,7 @@ float Function SetFloatValue()
 			Elseif iButton01 == 5
 				value += SetIntValue()
 			Elseif iButton01 == 6 ; Next Selection
-				if (positive == -1)
-					positive = 1
-				else
-					positive = -1
-				endif
+				positive = positive * -1
 			Elseif iButton01 ==7 ; Exit
 				return value  ; Return the float value
 			endif
@@ -425,4 +468,16 @@ EndFunction
 
 Function SetSavedFloat(int _index, float value)
 	savedFloats[_index] = value
+EndFunction
+
+Function SetSelectedMod(int value)
+	currentSelectedMod = value
+EndFunction
+
+String Function GetModAtLoadOrder()
+	return loadOrder[currentSelectedMod]
+EndFunction
+
+Function SetModAtLoadOrder(int _index, String _Mod)
+	loadOrder[_index] = _Mod
 EndFunction
