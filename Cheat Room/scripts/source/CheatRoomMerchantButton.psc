@@ -38,6 +38,7 @@ LeveledItem Property CheatRoom_TheMerchant_EnchantingItems_SoulGems Auto
 LeveledItem Property CheatRoom_TheMerchant_CraftingIngredients_BuildingMaterials Auto
 LeveledItem Property CheatRoom_TheMerchant_CraftingIngredients_Gems Auto
 LeveledItem Property CheatRoom_TheMerchant_CraftingIngredients_Metals Auto
+LeveledItem Property CheatRoom_TheMerchant_CraftingIngredients_Animal Auto
 LeveledItem Property CheatRoom_TheMerchant_SpellBooks_LL Auto
 
 Event OnActivate(ObjectReference akActionRef)
@@ -82,6 +83,7 @@ Event OnActivate(ObjectReference akActionRef)
 				CheatRoomMerchantRef.AddItem(CheatRoom_TheMerchant_CraftingIngredients_BuildingMaterials)
 				CheatRoomMerchantRef.AddItem(CheatRoom_TheMerchant_CraftingIngredients_Gems)
 				CheatRoomMerchantRef.AddItem(CheatRoom_TheMerchant_CraftingIngredients_Metals)
+				CheatRoomMerchantRef.AddItem(CheatRoom_TheMerchant_CraftingIngredients_Animal)
 			endIf
 			if (CheatRoom_TheMerchant_SpellBooks.GetValue() == 1)
 				CheatRoomMerchantRef.AddItem(CheatRoom_TheMerchant_SpellBooks_LL)
