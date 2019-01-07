@@ -56,8 +56,6 @@
 	"Data\\SCRIPTS\\CheatRoomActiveButton16.PEX",
 	"Data\\SCRIPTS\\CheatRoomActiveButton17DupItem.PEX",
 	"Data\\SCRIPTS\\CheatRoomActiveButton18RestorePlayer.PEX",
-	"Data\\SCRIPTS\\CheatRoomAddMods.PEX",
-	"Data\\SCRIPTS\\SOURCE\\CheatRoomAddMods.PSC",
 	"Data\\SCRIPTS\\CheatRoomRingShoutTimer.PEX",
 	"Data\\SCRIPTS\\CheatRoomRingJumpingBonus.PEX",
 	"Data\\SCRIPTS\\CheatRoomSpeedMult.PEX",
@@ -208,6 +206,6 @@
 	"Data\\SCRIPTS\\CheatRoomGetModItemsPlayer.PEX",
 	"Data\\SCRIPTS\\CheatRoomCheatMenuMain.PEX",
 	"Data\\SCRIPTS\\QF_CheatroomGiveItems_010013EA.PEX",
-	"Data\\meshes\\actors\\Character\\FaceGenData\\FaceGeom\\Cheat Room.esp\\00290321.NIF",
-	"Data\\textures\\actors\\Character\\FaceGenData\\FaceTint\\Cheat Room.esp\\00290321.dds"
+	"Data\\Meshes\\Actors\\Character\\FaceGenData\\FaceGeom\\Cheat Room.esp\\00290321.NIF",
+	"Data\\Textures\\Actors\\Character\\FaceGenData\\FaceTint\\Cheat Room.esp\\00290321.dds"
 ]
