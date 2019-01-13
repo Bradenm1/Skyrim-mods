@@ -5,18 +5,33 @@ Message Property MainMenu  Auto
 Message Property Menu01  Auto
 Message Property Menu02  Auto
 ObjectReference[] Property Xmarker00  Auto
+Cell[] Property CheatRooms Auto
 
 ;=======CODE START=======
 Event OnEffectStart(Actor akTarget, Actor akCaster)
 	int iButton01 = 0
 	bool Menu = True
-	While Menu
+	While Menu ;Why?
 		if iButton01 != -1
 			iButton01 = MainMenu.Show()
 			Menu = False
 			if iButton01 == 0
-				Xmarker00[1].moveto(aKTarget)
-				aKTarget.moveto(Xmarker00[0])
+				bool inCheatRoom = false
+				int counter = 0;
+				Cell playerParentCell = Game.GetPlayer().GetParentCell()
+				While (counter < CheatRooms.Length)
+					if (playerParentCell == CheatRooms[counter])
+						inCheatRoom = true;
+					endIf
+					counter = counter + 1
+				EndWhile
+				if (inCheatRoom == false) ;If they're not already in the cheat room, send them to the cheat room.
+					Xmarker00[1].moveto(aKTarget)
+					aKTarget.moveto(Xmarker00[0])
+				else ;User must've erroneously selected Cheat Room.
+					aKTarget.moveto(Xmarker00[0]) ;If the user is in QASmoke, move them back.
+					Self.OnEffectStart(akTarget, akCaster)
+				endIf
 			Elseif iButton01 ==1
 				aKTarget.moveto(Xmarker00[1])
 			Elseif iButton01 ==2
