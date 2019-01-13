@@ -208,5 +208,6 @@
 	"Data\\SCRIPTS\\QF_CheatroomGiveItems_010013EA.PEX",
 	"Data\\Meshes\\Actors\\Character\\FaceGenData\\FaceGeom\\Cheat Room.esp\\00290321.NIF",
 	"Data\\Textures\\Actors\\Character\\FaceGenData\\FaceTint\\Cheat Room.esp\\00290321.dds",
-	"Data\\SCRIPTS\\CheatRoomResetAllMines.PEX"
+	"Data\\SCRIPTS\\CheatRoomResetAllMines.PEX",
+	"Data\\SCRIPTS\\CheatRoomStonesofBarenziahQuest.PEX"
 ]
