@@ -1,7 +1,7 @@
 Scriptname CheatRoomActiveButton13DespHealth extends ObjectReference  
 
 ;=======Properties=======
-Potion Property PotionDesp  Auto  
+LeveledItem Property PotionDesp  Auto  
 
 ObjectReference Property XMarker  Auto  
 
