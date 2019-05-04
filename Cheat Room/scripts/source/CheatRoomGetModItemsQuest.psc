@@ -38,6 +38,10 @@ Function SpawnMods()
 	VigilEnforcerArmorSet()
 	ForgottenSeasons()
 	SaturaliaHolidayPack()
+	SpellKnightArmor()
+	ShadowfootSanctum()
+	ArmsOfChaos()
+	Umbra()
 	containerToSpawn.AddItem(moddedItemsList)
 EndFunction
 
@@ -603,5 +607,94 @@ Function SaturaliaHolidayPack()
 		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001A806, name))
 		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001A807, name))
 		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001A808, name))
+	endIf
+EndFunction
+
+Function SpellKnightArmor()
+	String name = "ccedhsse002-splkntset.esl"
+	Form formToCheck = (Game.GetFormFromFile(0x0001C89C, name) as Form)
+	If ( formToCheck != None ) ;Check if the user has the mod.
+		moddedItemsList.AddForm(formToCheck)
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001C89D, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001C89E, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001C89F, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001C8A0, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001C8A1, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001C8A2, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001C8A3, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001CD73, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001CD74, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001CD75, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001CD76, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001CD77, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001CD78, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001CD79, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001CD7A, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001CD7B, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001CD7C, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001CD7D, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001CD7E, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001C838, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001C853, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001C855, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001C889, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001C89B, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001C85B, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001C85D, name))
+	endIf
+EndFunction
+
+Function ShadowfootSanctum()
+	String name = "cceejsse003-hollow.esl"
+	Form formToCheck = (Game.GetFormFromFile(0x0001AA22, name) as Form)
+	If ( formToCheck != None ) ;Check if the user has the mod.
+		moddedItemsList.AddForm(formToCheck)
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001A829, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001A809, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001A80A, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001A80B, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001A80C, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001A80D, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001A80E, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001A80F, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001A810, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001A811, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001A812, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001A813, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001A853, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001A861, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001A9DF, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001AA7F, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001AABD, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001AB08, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001AB43, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001AB6F, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001AB70, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001AB71, name))
+	endIf
+EndFunction
+
+Function ArmsOfChaos()
+	String name = "ccpewsse002-armsofchaos.esl"
+	Form formToCheck = (Game.GetFormFromFile(0x0001B80F, name) as Form)
+	If ( formToCheck != None ) ;Check if the user has the mod.
+		moddedItemsList.AddForm(formToCheck)
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001B813, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001B81A, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001B81B, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001B855, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001B80B, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0001B80D, name))
+	endIf
+EndFunction
+
+Function Umbra()
+	String name = "ccbgssse016-umbra.esm"
+	Form formToCheck = (Game.GetFormFromFile(0x00007760, name) as Form)
+	If ( formToCheck != None ) ;Check if the user has the mod.
+		moddedItemsList.AddForm(formToCheck)
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0008230, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0015B3B, name))
+		moddedItemsList.AddForm(Game.GetFormFromFile(0x0000D62, name))
 	endIf
 EndFunction
